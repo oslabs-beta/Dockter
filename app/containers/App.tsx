@@ -1,10 +1,8 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
+import LandingPage from './LandingPage.tsx';
 
-type Props = {
-  children: ReactNode;
+const App = () => {
+  return <LandingPage />;
 };
 
-export default function App(props: Props) {
-  const { children } = props;
-  return <>{children}</>;
-}
+export default App;

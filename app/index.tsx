@@ -1,20 +1,10 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { render } from 'react-dom';
-import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { history, configuredStore } from './store';
+import App from './containers/App.tsx';
 import './app.global.css';
 
-const store = configuredStore();
-
-const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
+const root = document.getElementById('root');
 
 document.addEventListener('DOMContentLoaded', () => {
-  // eslint-disable-next-line global-require
-  const Root = require('./containers/Root').default;
-  render(
-    <AppContainer>
-      <Root store={store} history={history} />
-    </AppContainer>,
-    document.getElementById('root')
-  );
+  render(<App />, root);
 });

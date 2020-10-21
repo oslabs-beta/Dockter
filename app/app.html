@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Hello Electron React!</title>
-    <script>
+    <title>Dockter</title>
+    <script defer>
       (() => {
         if (
           typeof process !== 'object' ||
@@ -20,7 +20,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
+    <script defer>
       if (typeof process === 'object') {
         const scripts = [];
 
@@ -40,7 +40,7 @@
         if (scripts.length) {
           document.write(
             scripts
-              .map(script => `<script defer src="${script}"><\/script>`)
+              .map((script) => `<script defer src="${script}"><\/script>`)
               .join('')
           );
         }
