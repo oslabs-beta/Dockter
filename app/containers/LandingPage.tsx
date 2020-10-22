@@ -1,6 +1,6 @@
 import React from 'react';
-import Home from '../components/Home';
+import LogsContainer from './LogsContainer';
 
 export default function LandingPage() {
-  return <Home />;
+  return <LogsContainer />;
 }
