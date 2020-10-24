@@ -17,6 +17,7 @@ const logQuery =
   FROM
     Logs
   `;
+
 const containers = db.query(containerQuery);
 console.log(containers);
 // store info in database
