@@ -55,7 +55,7 @@ const LogsView = (props) => {
         timestamp: '1:34',
         loglevel: 'qwert',
       },
-      //insert data here
+      //insert data here s
     ];
     // const json =  response.json();
     setLogs(response);
