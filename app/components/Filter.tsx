@@ -8,6 +8,9 @@ const Filter = (props) => {
   //handles userInput into conditionally rendered input elements
   const [userInput, setUserInput] = useState('');
 
+  const today = new Date().toISOString().slice(0, 10);
+  console.log('date', today);
+
   return (
     <div id="filter-container">
       <div id="filter-options">
@@ -44,6 +47,9 @@ const Filter = (props) => {
             ></input>
             <button
               onClick={() => {
+                //add proper error handling
+                if (userInput === '') return;
+
                 if (!props.filterOptions[selection].includes(userInput)) {
                   props.setFilterOptions({
                     ...props.filterOptions,
@@ -79,9 +85,18 @@ const Filter = (props) => {
         {selection === 'timestamp' && (
           <span>
             From:
-            <input type="time"></input>
+            <input
+              type="time"
+              onChange={(e) => {
+                console.log(e.target.value);
+              }}
+            ></input>
             To:
-            <input></input>
+            <input
+              type="date"
+              max={today}
+              onChange={(e) => console.log(e.target.value)}
+            ></input>
           </span>
         )}
       </div>
