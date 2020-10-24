@@ -2,6 +2,7 @@ import React from 'react';
 
 const CurrentFilters = (props) => {
   const buttons = [];
+  //TODO: add a remove all filters button
 
   //iterates over filterOption state
   Object.keys(props.filterOptions).forEach((el) => {
@@ -13,7 +14,8 @@ const CurrentFilters = (props) => {
       option.forEach((selection, i) => {
         buttons.push(
           <button
-            key={i}
+            id={selection}
+            key={selection + el + i}
             onClick={() => {
               //if user clicks on button, it will remove the filter from filterOptions
               props.setFilterOptions({
@@ -31,6 +33,20 @@ const CurrentFilters = (props) => {
           </button>
         );
       });
+    }
+    if (el === 'timestamp' && option.from) {
+      buttons.push(
+        <button
+          id={el}
+          key={el}
+          onClick={() => {
+            props.setFilterOptions({
+              ...props.filterOptions,
+              [el]: { from: '', to: '' },
+            });
+          }}
+        >{`From ${option.from} to ${option.to}`}</button>
+      );
     }
   });
 
