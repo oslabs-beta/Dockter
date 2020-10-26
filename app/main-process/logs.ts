@@ -1,11 +1,10 @@
-const sqlite3 = require('sqlite3').verbose();
-
-let db = new sqlite3.Database('.db/database.sqlite3', (err) => {
-  if (err) {
-    console.log(err.message);
-  }
-  console.log('Connected to SQLite DB');
-});
+import { db } from './db.ts';
+// let db = new sqlite3.Database('.db/database.sqlite3', (err) => {
+//   if (err) {
+//     console.log(err.message);
+//   }
+//   console.log('Connected to SQLite DB');
+// });
 
 db.serialize(() => {
   db.run(
@@ -37,3 +36,4 @@ db.close((err) => {
   }
   console.log('Close the database connection.');
 })
+
