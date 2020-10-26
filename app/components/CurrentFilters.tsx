@@ -20,12 +20,7 @@ const CurrentFilters = (props) => {
               //if user clicks on button, it will remove the filter from filterOptions
               props.setFilterOptions({
                 ...props.filterOptions,
-                [el]: option.reduce((acc, element) => {
-                  if (element !== selection) {
-                    acc.push(element);
-                  }
-                  return acc;
-                }, []),
+                [el]: option.filter((element) => element !== selection),
               });
             }}
           >
