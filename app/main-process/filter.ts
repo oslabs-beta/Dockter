@@ -72,4 +72,3 @@ ipcMain.on('filter', (event, arg) => {
   //     logLevel:,
   //   }
   // ])
-});
