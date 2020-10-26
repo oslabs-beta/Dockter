@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTable } from 'react-table';
+import './LogsView.css';
 // import { ipcMain, ipcRenderer } from 'electron';
 
 // export const communicator = (ipcMain) => {
