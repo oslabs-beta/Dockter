@@ -7,9 +7,14 @@ const Filter = (props) => {
 
   //handles userInput into conditionally rendered input elements
   const [userInput, setUserInput] = useState('');
+  const [fromTimestamp, setFromTimestamp] = useState({ date: '', time: '' });
+  const [toTimestamp, setToTimestamp] = useState({ date: '', time: '' });
 
-  const today = new Date().toISOString().slice(0, 10);
-  console.log('date', today);
+  const date = new Date();
+  const today = date.toISOString().slice(0, 10);
+
+  //TODO: check if currentTime can/should update constantly (ex: with setTimeout)
+  const currentTime = date.getHours() + ':' + date.getMinutes();
 
   return (
     <div id="filter-container">
@@ -82,21 +87,67 @@ const Filter = (props) => {
         )}
 
         {/* conditionally renders timestamp options */}
+        {/* TODO: check if there is a better way of implementing a timestamp input, currently very bulky and annoying UX */}
         {selection === 'timestamp' && (
           <span>
             From:
             <input
+              id="from-date-input"
+              type="date"
+              max={today}
+              onChange={(e) =>
+                setFromTimestamp({ ...fromTimestamp, date: e.target.value })
+              }
+            ></input>
+            <input
+              id="from-time-input"
               type="time"
+              max={currentTime}
               onChange={(e) => {
-                console.log(e.target.value);
+                setFromTimestamp({ ...fromTimestamp, time: e.target.value });
               }}
             ></input>
             To:
             <input
+              id="to-date-input"
               type="date"
               max={today}
-              onChange={(e) => console.log(e.target.value)}
+              onChange={(e) =>
+                setFromTimestamp({ ...fromTimestamp, date: e.target.value })
+              }
             ></input>
+            <input
+              id="to-time-input"
+              type="time"
+              max={currentTime}
+              onChange={(e) =>
+                setToTimestamp({ ...fromTimestamp, time: e.target.value })
+              }
+            ></input>
+            <button
+              id="timestamp-submit"
+              onClick={() => {
+                //TODO: error handling for invalid input (if to is later than from)
+                if (
+                  fromTimestamp.date &&
+                  fromTimestamp.time &&
+                  toTimestamp.date &&
+                  toTimestamp.time
+                ) {
+                  const from = fromTimestamp.date + ' ' + fromTimestamp.time;
+                  const to = toTimestamp.date + ' ' + toTimestamp.time;
+                  props.setFilterOptions({
+                    ...props.filterOptions,
+                    timestamp: {
+                      from: from,
+                      to: to,
+                    },
+                  });
+                }
+              }}
+            >
+              Submit
+            </button>
           </span>
         )}
       </div>
