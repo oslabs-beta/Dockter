@@ -11,11 +11,8 @@ const socket = io('http://localhost:8080');
 // socket.emit('initializeLogger');
 
 ipcMain.on('ready', (event, arg) => {
-  console.log('arg from ready event', arg);
-  const containerList = docker.listContainers((err, containers) => {
+  docker.listContainers((err, containers) => {
     containers.forEach((container) => {
-      // console.log('containerId: ', container.Id);
-      // console.log('containerName: ', container.Names);
       if (container.Names[0] !== '/dockter-log')
         socket.emit('startLogCollection', container.Id);
     });
@@ -31,5 +28,6 @@ ipcMain.on('ready', (event, arg) => {
         )`
       );
     });
+    ipcMain.on('shipLog', (event.returnValue = log));
   });
-})
+});
