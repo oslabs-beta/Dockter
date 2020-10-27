@@ -17,7 +17,14 @@
   "dependencies": {
     "better-sqlite3": "^7.1.1",
     "dockerode": "^3.2.1",
+<<<<<<< HEAD
     "electron": "8.2.5",
     "socket.io-client": "^2.3.1"
   }
+=======
+    "electron": "^8.2.5",
+    "socket.io-client": "^2.3.1"
+  },
+  "devDependencies": {}
+>>>>>>> 282772deb879a474e177dbf62b3e42452cc62482
 }
