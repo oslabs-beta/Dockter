@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcRenderer } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -87,6 +87,7 @@ const createWindow = async () => {
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
+
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -96,6 +97,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+    ipcRenderer.send('ready');
   });
 
   mainWindow.on('closed', () => {
@@ -114,7 +116,9 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
+ //write another ipcrenderer.send to shutdown
 app.on('window-all-closed', () => {
+  ipcRenderer.send('shutdown');
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {
