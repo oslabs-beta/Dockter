@@ -188,22 +188,31 @@ const LogsView = (props) => {
     );
   });
 
-  useEffect(()=>{
-    ipcRenderer.send('loggylogs', 'component is ready')
-  }, []);
+  // useEffect(()=>{
+  //   ipcRenderer.send('ready', 'component is ready')
+  // }, []);
 
   useEffect(()=>{
-    ipcRenderer.send('filters', props.filterOptions)
-  }, [props.filterOptions])
+    ipcRenderer.send('filter', props.filterOptions)
+  }, [props.filterOptions]);
 
-  ipcRenderer.on('new-logs', (event, arg) => {
+  useEffect(() => {
+    ipcRenderer.send('sort', props.sortOptions)
+  }, [props.sortOptions]);
+
+
+
+  ipcRenderer.on('shipLog', (event, arg) => {
     setLogs([...logs, arg]);
   });
 
-  ipcRenderer.on('filters', (event, arg) => {
-    setLogs(arg)
+  ipcRenderer.on('filter', (event, arg) => {
+    setLogs(arg);
   })
 
+  ipcRenderer.on('sort', (event, arg) => {
+    setLogs(arg);
+  });
 
 
   // function addDummyData() {
