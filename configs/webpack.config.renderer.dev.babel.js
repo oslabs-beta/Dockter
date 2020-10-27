@@ -65,17 +65,29 @@ export default merge(baseConfig, {
     rules: [
       {
         test: /\.global\.css$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
+          use: [
+            {
+              loader: 'style-loader',
             },
-          },
-        ],
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: true,
+              },
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  ident: 'postcss',
+                  plugins: [
+                    require('tailwindcss'),
+                    require('autoprefixer'),
+                  ],
+                },
+              }
+            },
+          ],
       },
       {
         test: /^((?!\.global).)*\.css$/,
@@ -201,12 +213,12 @@ export default merge(baseConfig, {
   },
   plugins: [
     requiredByDLLConfig
-      ? null
-      : new webpack.DllReferencePlugin({
-          context: path.join(__dirname, '..', 'dll'),
-          manifest: require(manifest),
-          sourceType: 'var',
-        }),
+    ? null
+    : new webpack.DllReferencePlugin({
+      context: path.join(__dirname, '..', 'dll'),
+      manifest: require(manifest),
+      sourceType: 'var',
+    }),
 
     new webpack.HotModuleReplacementPlugin({
       multiStep: true,
