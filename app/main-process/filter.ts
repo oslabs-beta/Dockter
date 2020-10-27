@@ -37,6 +37,7 @@ ipcMain.on('filter', (event, arg) => {
     singleValueQuery.run(key, argKey);
     singlePropObj[key] = singleValueQuery;
     event.returnValue([singlePropObj]);
+
   } else {
     let filterParams = '';
     const multiPropObj = {};

@@ -1,11 +1,15 @@
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 
-const db = new sqlite3.Database('.db/database.sqlite3', (err) => {
-  if (err) {
-    console.log(err.message);
+const db = new sqlite3.Database(
+  path.resolve(__dirname, '../../db/database.sqlite3'),
+  (err) => {
+    if (err) {
+      console.log(err.message);
+    }
+    console.log('Connected to SQLite DB');
   }
-  console.log('Connected to SQLite DB');
-});
+);
 
 db.serialize(() => {
   db.run(
@@ -30,7 +34,7 @@ db.serialize(() => {
       FOREIGN KEY (container_id) REFERENCES containers(container_id)
     )`
   );
-})
+});
 
 db.close((err) => {
   if (err) {
