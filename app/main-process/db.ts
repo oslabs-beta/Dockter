@@ -1,3 +1,5 @@
+import { ipcMain } from "electron";
+
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
@@ -33,11 +35,13 @@ db.serialize(() => {
   );
 })
 
-db.close((err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log('Close the database connection.');
-});
+ipcMain.on('shutdown', (event, arg) => {
+  db.close((err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Close the database connection.');
+  });
+})
 
 export { db };
