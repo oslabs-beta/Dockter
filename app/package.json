@@ -16,8 +16,8 @@
   "license": "MIT",
   "dependencies": {
     "dockerode": "^3.2.1",
-    "electron": "^10.1.5",
-    "socket.io-client": "^2.3.1",
-    "sqlite3": "^5.0.0"
-  }
+    "electron": "^8.2.5",
+    "socket.io-client": "^2.3.1"
+  },
+  "devDependencies": {}
 }

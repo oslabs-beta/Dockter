@@ -1,67 +1,75 @@
-/* eslint-ignore */
+/* eslint-disable */
+// const { ipcMain } = require('electron');
+// const sqlite3 = require('sqlite3').verbose();
+// const db = new sqlite3.Database('./mock.sqlite3');
 
-const { ipcMain } = require('electron');
-const sqlite3 = require('sqlite3').verbose();
+// SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
+// FROM logs l
+// INNER JOIN containers c
+// ON l.container_id = c.container_id;
 
-const db = new sqlite3.Database('./mock.sqlite3');
-const containerQuery =
-`SELECT
-    *
-  FROM
-    Containers
-  `;
+// TODO: import db instance
 
-const logQuery =
-`SELECT
-    *
-  FROM
-    Logs
-  `;
-
-const containers = db.query(containerQuery);
-console.log(containers);
-// store info in database
-// make queiries
-// when an event to filter is fired from ipcRender, we will return an obj with the requested data from our db
-// when the arg is recieved, should we check the recieved object first to see if any prop does not have a value?
-// if there is a value, we should SELECT val FROM table WHERE val NOT NULL?
-// could make a constuctor
 ipcMain.on('filter', (event, arg) => {
-  // the argument in this case should print out the req obj from client side
+  const filterProps = [];
+  // when we get arg from ipcRender process, loop thru and check to see if key val is not zero
+  // if so push key into filterprops arr
+  const argKeys = Object.keys(arg);
 
-  event.returnValue([
-    {
-      container: '',
-      image: '',
-      status: '',
-      stream: '',
-      timestamp: {
-        from: '',
-        to: '',
-      },
-      hostIp: '',
-      hostPort: '',
-      logLevel: '',
-    },
-  ]);
-});
-// by default sort by timestamp
-ipcMain.on('sort', (event, arg) => {
-  console.log(arg);
-  // event.reply();
-  event.returnValue([
-    {
-      container: '',
-      image: '',
-      status: '',
-      stream: '',
-      timestamp: {
-        from: '',
-        to: '',
-      },
-      hostIp: '',
-      hostPort: '',
-      logLevel: '',
-    },
-  ]);
+  argKeys.forEach((key) => {
+    if (arg[key].length !== 0) filterProps.push(key);
+  });
+
+  // check to see if there is only one item in filterProps, and if there is, make a query with that item
+  if (filterProps.length === 1) {
+    let key = filterProps[0];
+    let argKey = arg[key];
+    const singlePropObj = {};
+
+    let singleValueQuery = db.prepare(
+      `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
+      FROM logs l
+      INNER JOIN containers c
+      ON l.container_id = c.container_id
+      WHERE ? = ?`
+    );
+
+    singleValueQuery.run(key, argKey);
+    singlePropObj[key] = singleValueQuery;
+    event.returnValue([singlePropObj]);
+  } else {
+    let filterParams = '';
+    const multiPropObj = {};
+
+    let multiValueQuery = db.prepare(
+      `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
+      FROM logs l
+      INNER JOIN containers c
+      ON l.container_id = c.container_id
+      WHERE ?`
+    );
+
+    for (let i = 0; i < filterProps.length; i++) {
+      if (i === 0) filterParams += `${filterProps[i]}=${arg.filterProps[0]}`;
+      else filterParams += ` AND ${filterProps[i]}=${arg.filterProps[0]}`;
+      multiPropObj[filterProps[i]] = multiValueQuery;
+    }
+
+    multiValueQuery.run(filterParams);
+    event.returnValue([multiPropObj]);
+  }
+
+  // event.returnValue([
+  //   {
+  //     message:,
+  //     timestamp:,
+  //     stream:,
+  //     container_id:,
+  //     name:,
+  //     image:,
+  //     hostIp:,
+  //     hostPort:,
+  //     logLevel:,
+  //   }
+  // ])
 });
