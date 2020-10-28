@@ -1,30 +1,26 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const db = new sqlite3.Database(
-  path.resolve(__dirname, '../../db/database.sqlite3'),
-  (err) => {
-    if (err) {
-      console.log(err.message);
-    }
-    console.log('Connected to SQLite DB');
+const db = new sqlite3.Database(path.resolve(__dirname, '../../db/database.sqlite3'), (err) => {
+  if (err) {
+    console.log(err.message);
   }
 );
 
 db.serialize(() => {
   db.run(
-    `CREATE TABLE containers (
+    `CREATE TABLE IF NOT EXISTS containers (
       _id SERIAL PRIMARY KEY,
       container_id VARCHAR(255),
       name VARCHAR(255),
       image VARCHAR(255),
       status VARCHAR(255),
       host_ip VARCHAR(255),
-      host_port VARCHAR(255),
+      host_port VARCHAR(255)
     )`
   );
   db.run(
-    `CREATE TABLE logs (
+    `CREATE TABLE IF NOT EXISTS logs (
       _id SERIAL PRIMARY KEY,
       container_id VARCHAR(255),
       message VARCHAR(255),
