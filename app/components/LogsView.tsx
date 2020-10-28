@@ -1,243 +1,80 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useTable } from 'react-table';
+import React, { useState, useEffect } from 'react';
 import './LogsView.css';
-import { ipcMain, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 
-// export const communicator = (ipcMain) => {
-//   ipcMain.on('asynchronous message', (e, arg) => {
-//     console.log(arg);
-//     e.sender.send('asynchronous-reply', 'pong');
-//   });
-// };
-
-// export const transponder = (ipcRenderer) => {
-//   ipcRenderer.on('asynchronous-reply', (e, arg) => {
-//     console.log(arg);
-//   });
-//   ipcRenderer.send('asynchronous-message', 'ping');
-// };
-
-//react table;
-
-// const COLUMNS = [
-//   {
-//     Header: 'Log',
-//     accessor: 'log',
-//   },
-//   {
-//     Header: 'Stream',
-//     accessor: 'stream',
-//   },
-//   {
-//     Header: 'Time Stamp',
-//     accessor: 'time',
-//   },
-// ];
-
-// const mockData = [
-//   //dummy data
-//     {
-//         "log": "\n",
-//         "stream": "stdout",
-//         "time": "2020-10-21T00:27:37.81190074Z"
-//     },
-//     {
-//         "log": "\u003e vue-event-bulletin@1.0.0 start /usr/src/app\n",
-//         "stream": "stdout",
-//         "time": "2020-10-21T00:27:37.811944818Z"
-//     },
-//     {
-//         "log": "\u003e node server.js\n",
-//         "stream": "stdout",
-//         "time": "2020-10-21T00:27:37.811948351Z"
-//     },
-//     {
-//         "log": "\n",
-//         "stream": "stdout",
-//         "time": "2020-10-21T00:27:37.811950421Z"
-//     },
-//     {
-//         "log": "Magic happens on port 8080...\n",
-//         "stream": "stdout",
-//         "time": "2020-10-21T00:27:37.928162186Z"
-//     },
-//     {
-//         "log": "ERROR: error in /logs: [Error: ENOENT: no such file or directory, open '/var/76b6918cb65130a38de77f1b5a96b6d416b59e2f4b28226b1b0c2572ec22e983/76b6918cb65130a38de77f1b5a96b6d416b59e2f4b28226b1b0c2572ec22e983-json.log'] {\n",
-//         "stream": "stdout",
-//         "time": "2020-10-21T00:27:43.848211501Z"
-//     },
-
-//   //insert data here s
-// ];
-
-// function addData() {
-//   let test = {
-//     "log": "new data",
-//     "stream": "stdout",
-//     "time": "1234"
-//   }
-//   mockData.push(test);
-//   console.log(test);
-// }
-
-// const LogsView = () => {
-//   // const [logs, setLogs] = useState([]);
-//   // const logList
-//   const columns = useMemo(() => COLUMNS, []);
-//   const data = useMemo(() => mockData, []);
-
-//   const tableInstance = useTable({
-//     columns,
-//     data,
-//   });
-
-//   const {
-//     getTableProps,
-//     getTableBodyProps,
-//     headerGroups,
-//     rows,
-//     prepareRow,
-//   } = tableInstance;
-
-//   return (
-//     <table {...getTableProps()}>
-//       <div>
-//         <button onClick={addData}>Add Data</button>
-//       </div>
-//       <thead>
-//         {headerGroups.map((headerGroup) => (
-//           <tr {...headerGroup.getHeaderGroupProps()}>
-//             {
-//               //gives us access to each column
-//               headerGroup.headers.map((column) => (
-//                 <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-//               ))
-//             }
-//           </tr>
-//         ))}
-//       </thead>
-//       <tbody {...getTableBodyProps()}>
-//         {rows.map((row) => {
-//           prepareRow(row);
-//           return (
-//             <tr {...row.getRowProps()}>
-//               {row.cells.map((cell) => {
-//                 return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-//               })}
-//             </tr>
-//           );
-//         })}
-//       </tbody>
-//     </table>
-//   );
-
-// };
-
-//without react table
-
-// export const communicator = (ipcMain) => {
-//   ipcMain.on('asynchronous message', (e, arg) => {
-//     console.log(arg);
-//     e.sender.send('asynchronous-reply', 'pong');
-//   });
-// };
-// export const transponder = (ipcRenderer) => {
-//   ipcRenderer.on('asynchronous-reply', (e, arg) => {
-//     console.log(arg);
-//   });
-//   ipcRenderer.send('asynchronous-message', 'ping');
-// };
 const LogsView = (props) => {
-  const response = [
-    //dummy data
-    {
-      logID: 1234,
-      containerID: 2345,
-      message: 'asdfg',
-      timestamp: '1:34',
-      loglevel: 'qwert',
-    },
-    {
-      logID: 1235,
-      containerID: 2346,
-      message: 'asdfg',
-      timestamp: '1:34',
-      loglevel: 'qwert',
-    },
-    {
-      logID: 1236,
-      containerID: 2347,
-      message: 'asdfg',
-      timestamp: '1:34',
-      loglevel: 'qwert',
-    },
-  ];
-  const [logs, setLogs] = useState(response);
-  // const logList
-  const elements = logs.map((ele) => {
-    console.log('map within elements variable')
+  const [logs, setLogs] = useState([]);
+  const [newLog, setNewLog] = useState({});
 
+  const logsToRender = logs.map((logEntry, i) => {
+    const { container_id, timestamp, log, stream } = logEntry;
+    const keys = Object.keys(props.filterOptions);
+    for (let idx = 0; idx < keys.length; idx++) {
+      const option = keys[idx];
+      let currentOption = props.filterOptions[option];
+      if (option === 'timestamp' && currentOption.to && currentOption.from) {
+        const date = new Date(timestamp.slice(0, 19)).getTime();
+        const from = new Date(currentOption.from).getTime();
+        const to = new Date(currentOption.to).getTime();
+        if (date < from || date > to) return null;
+      }
+      if (currentOption.length && !currentOption.includes(logEntry[option]))
+        return null;
+    }
     return (
-      <tr>
-        <td>{ele.containerID}</td>
-        <td>{ele.logID}</td>
-        <td>{ele.timestamp}</td>
-        <td>{ele.message}</td>
-        <td>{ele.loglevel}</td>
+      <tr key={`${i}`}>
+        <td>{container_id}</td>
+        <td>{timestamp}</td>
+        <td>{log}</td>
+        <td>{stream}</td>
       </tr>
     );
   });
 
-  useEffect(()=>{
-    ipcRenderer.send('loggylogs', 'component is ready')
+  useEffect(() => {
+    ipcRenderer.send('ready', 'component is ready');
   }, []);
 
-  useEffect(()=>{
-    ipcRenderer.send('filters', props.filterOptions)
-  }, [props.filterOptions])
+  useEffect(() => {
+    ipcRenderer.send('filter', props.filterOptions);
+  }, [props.filterOptions]);
 
-  ipcRenderer.on('new-logs', (event, arg) => {
-    setLogs([...logs, arg]);
+  useEffect(() => {
+    ipcRenderer.on('reply-filter', (event, arg) => {
+      setLogs(arg);
+    });
   });
 
-  ipcRenderer.on('filters', (event, arg) => {
-    setLogs(arg)
-  })
+  // useEffect(() => {
+  //   ipcRenderer.send('sort', props.sortOptions);
+  // }, [props.sortOptions]);
 
+  useEffect(() => {
+    // This event listener receives every new log as an object
+    ipcRenderer.on('shipLog', (event, newLog) => {
+      setNewLog(newLog);
+    });
+  }, []);
 
-
-  // function addDummyData() {
-  //   const testData = {
-  //     logID: 1,
-  //     containerID: 2,
-  //     message: 'a',
-  //     timestamp: '1:3',
-  //     loglevel: 'q',
-  //   }
-  //   response.push(testData);
-  //   // setLogs(response);
-  //   setLogs([...logs, ...response]);
-  //   console.log(testData);
-  //   console.log(response);
-  // };
+  useEffect(() => {
+    setLogs([...logs, newLog]);
+  }, [newLog]);
 
   return (
     <div>
-    <table>
-      <colgroup span="5"></colgroup>
-      <thead>
-        <tr>
-          <th id="containerID">Container ID</th>
-          <th id="logID">Log ID</th>
-          <th id="message">Message</th>
-          <th id="timestamp">Timestamp</th>
-          <th id="loglevel">Log Level</th>
-        </tr>
-      </thead>
-      <tbody>
-        {elements}
-      </tbody>
-    </table>
+      Add New Log
+      <table>
+        <colgroup span="5"></colgroup>
+        <thead>
+          <tr>
+            <th id="containerID">Container ID</th>
+            <th id="logID">Timestamp</th>
+            <th id="message">Message</th>
+            <th id="timestamp">Stream</th>
+          </tr>
+        </thead>
+        <tbody>{logsToRender}</tbody>
+      </table>
     </div>
   );
 };
