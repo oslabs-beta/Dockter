@@ -5,7 +5,7 @@ const path = require('path');
 
 const db = new Database(path.resolve(__dirname, '../../db/database.sqlite3'), { verbose: console.log })
 
-db.prepare(
+db.exec(
   `CREATE TABLE IF NOT EXISTS containers (
     _id SERIAL PRIMARY KEY,
     container_id VARCHAR(255),
@@ -16,7 +16,7 @@ db.prepare(
     host_port VARCHAR(255)
   )`
 );
-db.prepare(
+db.exec(
   `CREATE TABLE IF NOT EXISTS logs (
     _id SERIAL PRIMARY KEY,
     container_id VARCHAR(255),
