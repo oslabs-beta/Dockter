@@ -63,24 +63,48 @@ const LogsView = (props) => {
 	//   ipcRenderer.send('ready', 'component is ready')
 	// }, []);
 
-	// useEffect(()=>{
-	//   ipcRenderer.send('filter', props.filterOptions)
-	// }, [props.filterOptions]);
+  const logsToRender = logs.map((logEntry, i) => {
+    const { container_id, timestamp, log, stream } = logEntry;
+    const keys = Object.keys(props.filterOptions);
+    for (let idx = 0; idx < keys.length; idx++) {
+      const option = keys[idx];
+      let currentOption = props.filterOptions[option];
+      if (option === 'timestamp' && currentOption.to && currentOption.from) {
+        const date = new Date(timestamp.slice(0, 19)).getTime();
+        const from = new Date(currentOption.from).getTime();
+        const to = new Date(currentOption.to).getTime();
+        if (date < from || date > to) return null;
+      }
+      if (currentOption.length && !currentOption.includes(logEntry[option]))
+        return null;
+    }
+    return (
+      <tr key={`${i}`}>
+        <td>{container_id}</td>
+        <td>{timestamp}</td>
+        <td>{log}</td>
+        <td>{stream}</td>
+      </tr>
+    );
+  });
 
-	// useEffect(() => {
-	//   ipcRenderer.send('sort', props.sortOptions)
-	// }, [props.sortOptions]);
+  useEffect(() => {
+    ipcRenderer.send('ready', 'component is ready');
+  }, []);
 
-	useEffect(() => {
-		// This event listener receives every new log as an object
-		ipcRenderer.on('shipLog', (event, newLog) => {
-			setNewLog(newLog);
-		});
-	}, []);
+  useEffect(() => {
+    ipcRenderer.send('filter', props.filterOptions);
+  }, [props.filterOptions]);
 
-	useEffect(() => {
-		setLogs([...logs, newLog]);
-	}, [newLog]);
+  useEffect(() => {
+    ipcRenderer.on('reply-filter', (event, arg) => {
+      setLogs(arg);
+    });
+  });
+
+  // useEffect(() => {
+  //   ipcRenderer.send('sort', props.sortOptions);
+  // }, [props.sortOptions]);
 
 	useEffect(() => {
 		// Start scroll at bottom of logs view
