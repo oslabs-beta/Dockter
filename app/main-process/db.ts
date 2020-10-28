@@ -28,7 +28,6 @@ db.prepare(
   )`
 );
 
-
 ipcMain.on('shutdown', (event, arg) => {
   db.close((err) => {
     if (err) {
