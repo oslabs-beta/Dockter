@@ -2,11 +2,14 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
+/*
 @import '~@fortawesome/fontawesome-free/css/all.css';
+*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
 body {
   position: relative;
   color: white;
@@ -48,3 +51,4 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
 }
+*/
