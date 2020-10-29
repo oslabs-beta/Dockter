@@ -3,6 +3,7 @@ import { ipcMain } from 'electron';
 import { db } from './db.ts';
 
 ipcMain.on('filter', (event, arg) => {
+  console.log('arg: ', arg)
   const filterProps = [];
   const argKeys = Object.keys(arg);
 
@@ -11,17 +12,18 @@ ipcMain.on('filter', (event, arg) => {
   });
 
   if (filterProps.length === 0) {
-    db.all(
+    const stmt = db.prepare(
       `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
         FROM logs l
         INNER JOIN containers c
-        ON l.container_id = c.container_id`,
-      (error, rows) => {
-        if (error) console.log('ERROR', error);
-        event.reply('reply-filter', rows);
-      }
-    );
+        ON l.container_id = c.container_id`)
+    try {
+      event.reply('reply-filter', stmt.all());
+    } catch (err) {
+      console.log('ERROR: ', err);
+    } 
   } else {
+    // TODO: Discuss how we want to handle aliases - align column names
     let query = `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
        FROM logs l
        INNER JOIN containers c
@@ -33,16 +35,18 @@ ipcMain.on('filter', (event, arg) => {
       if (i > 0) {
         queryExtension += ` AND `;
       }
-      for (let j = 0; j < arg[filterProps[i]].length; j++) {
-        const containerProps = [
+      console.log('filterProps: ', filterProps)
+      for (let j = 0; j < arg[filterProps[i]].length; j++) { 
+        const containerColumns = [
           'name',
           'image',
           'status',
           'host_ip',
           'host_port',
         ];
-        let prefix = containerProps.includes(filterProps[i]) ? 'c.' : 'l.';
-        if (j === 0) queryExtension += `${prefix + filterProps[i]} IN (`;
+        // TODO: We should not need regex here - names and images across DB and front-end should be aligned
+        let prefix = containerColumns.includes(filterProps[i].match(/(?<=container_).*$/g)[0]) ? 'c.' : 'l.';
+        if (j === 0) queryExtension += `${prefix + filterProps[i].match(/(?<=container_).*$/g)[0]} IN (`;
         queryExtension += ' ?';
         if (arg[filterProps[i]][j + 1]) queryExtension += ',';
         params.push(arg[filterProps[i]][j]);
@@ -51,10 +55,16 @@ ipcMain.on('filter', (event, arg) => {
       query += queryExtension;
       queryExtension = '';
     }
-    db.all(query, params, (error, rows) => {
-      if (error) console.log('ERROR', error);
-      event.reply('reply-filter', rows);
-    });
+    const stmt = db.prepare(query);
+    try {
+      event.reply('reply-filter', stmt.all(params));
+    } catch (err) {
+      console.log('ERROR: ', err);
+    }
+    // db.all(query, params, (error, rows) => {
+    //   if (error) console.log('ERROR', error);
+    //   event.reply('reply-filter', rows);
+    // });
   }
 });
 

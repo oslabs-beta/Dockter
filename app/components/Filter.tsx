@@ -73,25 +73,25 @@ const Filter = (props) => {
 						}}
 					>
 						<option defaultValue="options">options</option>
-						<option value="containerId">container id</option>
-						<option value="name">name</option>
-						<option value="image">image</option>
+						<option value="container_id">container id</option>
+						<option value="container_name">name</option>
+						<option value="container_image">image</option>
 						<option value="status">status</option>
 						<option value="stream">stream</option>
 						<option value="timestamp">timestamp</option>
-						<option value="hostIp">host ip</option>
-						<option value="hostPort">host port</option>
-						<option value="logLevel">log level</option>
+						<option value="host_ip">host ip</option>
+						<option value="host_port">host port</option>
+						<option value="log_level">log level</option>
 					</select>
 
 					{/* conditionally renders input element for specfic options */}
-					{(selection === 'containerId' ||
-						selection === 'name' ||
-						selection === 'image' ||
+					{(selection === 'container_id' ||
+						selection === 'container_name' ||
+						selection === 'container_image' ||
 						selection === 'status' ||
-						selection === 'hostIp' ||
-						selection === 'hostPort' ||
-						selection === 'logLevel') && (
+						selection === 'host_ip' ||
+						selection === 'host_port' ||
+						selection === 'log_level') && (
 							<form className="w-full max-w-sm inline-block">
 								<div className="flex items-center border-b border-teal-500 py-2">
 									<input

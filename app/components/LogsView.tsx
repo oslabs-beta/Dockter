@@ -8,23 +8,23 @@ import parse from 'html-react-parser';
 const convert = new Convert();
 
 const LogsView = ({ filterOptions }) => {
-  const [newLog, setNewLog] = useState({ log: '' });
+  const [newLog, setNewLog] = useState({ message: '' });
   const [logs, setLogs] = useState([]);
   const tableBody = useRef(null);
 
   // TODO: Refactor this into it's own react component
   const logsToRender = logs.map((logEntry, i) => {
     // TODO: Coordinate naming throughout the project
-    // TODO: Rename timestampe to time
+    // TODO: Rename timestamp to time
     const {
-      containerId,
+      container_id,
       container_name,
-      image,
-      hostPort,
+      container_image,
+      host_port,
       stream,
       time,
       timestamp,
-      log,
+      message,
     } = logEntry;
     const keys = Object.keys(filterOptions);
 
@@ -39,14 +39,17 @@ const LogsView = ({ filterOptions }) => {
 
         if (date < from || date > to) return null;
       }
-
-      if (currentOption.length && !currentOption.includes(logEntry[option]))
+      console.log('log entry:', logEntry);
+      // console.log('logEntry[option]:', logEntry)
+      if (currentOption.length && !currentOption.includes(logEntry[option])){
+      // console.log('returning null');
         return null;
+      }
     }
 
     // TODO: Decide on stripping ansi
-    const logWithAnsi = log
-      ? parse(DOMPurify.sanitize(convert.toHtml(log)))
+    const logWithAnsi = message
+      ? parse(DOMPurify.sanitize(convert.toHtml(message)))
       : '';
 
     // TODO: Handle .slice error message
@@ -54,16 +57,16 @@ const LogsView = ({ filterOptions }) => {
     return (
       <tr key={`log-row-${i}`} className="flex w-full mb-4">
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
-          {containerId ? containerId.slice(0, 14) : ''}
+          {container_id ? container_id.slice(0, 14) : ''}
         </td>
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
           {container_name ? container_name : ''}
         </td>
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
-          {image ? image : ''}
+          {container_image ? container_image : ''}
         </td>
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
-          {hostPort ? hostPort : ''}
+          {host_port ? host_port : ''}
         </td>
         <td className="px-6 py-4 w-1/12">
           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
@@ -111,12 +114,14 @@ const LogsView = ({ filterOptions }) => {
 
   // Filter logic
   useEffect(() => {
+    console.log('useEffect in filterOptions ipcRendereer effect')
     ipcRenderer.send('filter', filterOptions);
   }, [filterOptions]);
 
   useEffect(() => {
     ipcRenderer.on('reply-filter', (event, arg) => {
       setLogs(arg);
+      console.log('arg on front-end: ', arg)
     });
   });
 

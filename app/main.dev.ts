@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import './main-process/dockter-log'
+import './main-process/filter'
 
 export default class AppUpdater {
   constructor() {

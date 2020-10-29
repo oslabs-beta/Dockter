@@ -13,8 +13,6 @@ const socket = io('http://localhost:8080');
 
 ipcMain.on('ready', (event, arg) => {
   const content = webContents.getAllWebContents()[0];
-  // console.log('content,', content);
-  content.send('testmessage', 'hello from ipc main');
 
   docker.listContainers((err, containers) => {
     containers.forEach((container) => {
@@ -30,13 +28,16 @@ ipcMain.on('ready', (event, arg) => {
   });
 
   socket.on('newLog', (shippedLog) => {
-    console.log('log: ', shippedLog);
+    //TODO: Get most updated log shipper code
+    //TODO: Investigate whether to handle logic for object structuring here or in Dockter Log Shipper
     const { containerId, log, time, stream } = shippedLog;
     const stmt = db.prepare(
       `INSERT INTO logs (container_id, message, timestamp, stream)
       VALUES (?, ?, ?, ?)`
     );
     stmt.run(containerId, log, time, stream);
+    //TODO: Align column name and DB
+    // shippedLog.container_id = containerId;
     content.send('shipLog', shippedLog);
   });
 });
