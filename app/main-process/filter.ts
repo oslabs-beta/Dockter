@@ -72,7 +72,6 @@ ipcMain.on('filter', (event, arg) => {
     }
     const stmt = db.prepare(query);
     try {
-      console.log('stmt.all(params):', stmt.all(params));
       event.reply('reply-filter', stmt.all(params));
     } catch (err) {
       console.log('ERROR: ', err);
