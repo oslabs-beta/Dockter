@@ -48,3 +48,6 @@ npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+# SQLite3
+db/database.sqlite3
