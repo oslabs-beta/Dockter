@@ -7,8 +7,8 @@ const db = new Database(path.resolve(__dirname, '../../db/database.sqlite3'), { 
 
 db.exec(
   `CREATE TABLE IF NOT EXISTS containers (
-    _id SERIAL PRIMARY KEY,
-    container_id VARCHAR(255),
+    _id SERIAL,
+    container_id VARCHAR(255) UNIQUE PRIMARY KEY,
     name VARCHAR(255),
     image VARCHAR(255),
     status VARCHAR(255),
@@ -24,17 +24,17 @@ db.exec(
     timestamp VARCHAR(255),
     log_level VARCHAR(255),
     stream VARCHAR(255),
-    FOREIGN KEY (container_id) REFERENCES containers(container_id)
+    FOREIGN KEY (container_id) REFERENCES containers (container_id)
   )`
 );
 
-ipcMain.on('shutdown', (event, arg) => {
-  db.close((err) => {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log('Close the database connection.');
-  });
-})
+// ipcMain.on('shutdown', (event, arg) => {
+//   db.close((err) => {
+//     if (err) {
+//       return console.error(err.message);
+//     }
+//     console.log('Close the database connection.');
+//   });
+// })
 
 export { db };
