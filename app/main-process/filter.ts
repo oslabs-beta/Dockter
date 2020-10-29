@@ -34,7 +34,7 @@ ipcMain.on('filter', (event, arg) => {
     const params = [];
     for (let i = 0; i < filterProps.length; i++) {
       if (i > 0) {
-        queryExtension += ` AND `;
+        queryExtension += ` OR `;
       }
       console.log('filterProps: ', filterProps);
       for (let j = 0; j < arg[filterProps[i]].length; j++) {
