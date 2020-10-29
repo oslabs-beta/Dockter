@@ -4,7 +4,6 @@ import { ipcRenderer } from 'electron';
 import Convert from 'ansi-to-html';
 import DOMPurify from 'dompurify';
 import parse from 'html-react-parser';
-import { execSync } from 'child_process';
 
 const convert = new Convert();
 
