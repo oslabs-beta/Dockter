@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 import Convert from 'ansi-to-html';
 import DOMPurify from 'dompurify';
 import parse from 'html-react-parser';
+import { execSync } from 'child_process';
 
 const convert = new Convert();
 
@@ -14,7 +15,6 @@ const LogsView = ({ filterOptions }) => {
 
   // TODO: Refactor this into it's own react component
   const logsToRender = logs.map((logEntry, i) => {
-    console.log(logEntry);
     // TODO: Coordinate naming throughout the project
     // TODO: Rename timestamp to time
     const {
@@ -40,12 +40,13 @@ const LogsView = ({ filterOptions }) => {
 
         if (date < from || date > to) return null;
       }
-      // TODO: console.log('log entry:', logEntry);
-      // TODO: console.log('logEntry[option]:', logEntry)
-      if (currentOption.length && !currentOption.includes(logEntry[option])) {
-        // console.log('returning null');
+
+      if (
+        currentOption.length &&
+        !currentOption.includes(logEntry[option]) &&
+        idx === keys.length - 1
+      )
         return null;
-      }
     }
 
     // TODO: Decide on stripping ansi
@@ -107,7 +108,10 @@ const LogsView = ({ filterOptions }) => {
   useEffect(() => {
     ipcRenderer.on('shipLog', (event, newLog) => {
       setNewLog(newLog);
-      console.log('newLog: ', newLog);
+    });
+
+    ipcRenderer.on('reply-filter', (event, arg) => {
+      setLogs(arg);
     });
   }, []);
 
@@ -118,20 +122,12 @@ const LogsView = ({ filterOptions }) => {
   useEffect(() => {
     // TODO: Add error handler for null tableBody
     tableBody.current.scrollTop = tableBody.current.scrollHeight;
-  });
+  }, [newLog]);
 
   // Filter logic
   useEffect(() => {
-    console.log('useEffect in filterOptions ipcRendereer effect');
     ipcRenderer.send('filter', filterOptions);
   }, [filterOptions]);
-
-  useEffect(() => {
-    ipcRenderer.on('reply-filter', (event, arg) => {
-      setLogs(arg);
-      // console.log('arg on front-end: ', arg)
-    });
-  });
 
   useEffect(() => {
     // Start scroll at bottom of logs view
