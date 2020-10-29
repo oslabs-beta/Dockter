@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
-import styles from './LogsContainer.css';
+import React, { useState, useEffect } from 'react';
 import LogsView from '../components/LogsView.tsx';
 import Filter from '../components/Filter.tsx';
-import Sort from '../components/Sort.tsx';
-
-import { ipcRenderer } from 'electron';
 
 const LogsContainer = () => {
-	ipcRenderer.send('ready');
-
   const [sortBy, setSortBy] = useState('');
   const [filterOptions, setFilterOptions] = useState({
     containerId: [],
@@ -31,7 +25,6 @@ const LogsContainer = () => {
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
-			{/*<Sort sortBy={sortBy} setSortBy={setSortBy} />*/}
       <LogsView filterOptions={filterOptions} />
     </div>
   );
