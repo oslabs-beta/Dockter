@@ -3,7 +3,7 @@ import { ipcMain } from 'electron';
 import { db } from './db.ts';
 
 ipcMain.on('filter', (event, arg) => {
-  console.log('arg: ', arg)
+  console.log('arg: ', arg);
   const filterProps = [];
   const argKeys = Object.keys(arg);
 
@@ -16,12 +16,13 @@ ipcMain.on('filter', (event, arg) => {
       `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
         FROM logs l
         INNER JOIN containers c
-        ON l.container_id = c.container_id`)
+        ON l.container_id = c.container_id`
+    );
     try {
       event.reply('reply-filter', stmt.all());
     } catch (err) {
       console.log('ERROR: ', err);
-    } 
+    }
   } else {
     // TODO: Discuss how we want to handle aliases - align column names
     let query = `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
@@ -35,8 +36,8 @@ ipcMain.on('filter', (event, arg) => {
       if (i > 0) {
         queryExtension += ` AND `;
       }
-      console.log('filterProps: ', filterProps)
-      for (let j = 0; j < arg[filterProps[i]].length; j++) { 
+      console.log('filterProps: ', filterProps);
+      for (let j = 0; j < arg[filterProps[i]].length; j++) {
         const containerColumns = [
           'name',
           'image',
@@ -45,8 +46,22 @@ ipcMain.on('filter', (event, arg) => {
           'host_port',
         ];
         // TODO: We should not need regex here - names and images across DB and front-end should be aligned
-        let prefix = containerColumns.includes(filterProps[i].match(/(?<=container_).*$/g)[0]) ? 'c.' : 'l.';
-        if (j === 0) queryExtension += `${prefix + filterProps[i].match(/(?<=container_).*$/g)[0]} IN (`;
+        // console.log(filterProps[i].match(/(?<=container)(_id|(?<!_).+)$/g));
+        console.log(
+          filterProps[i].match(/_id$|(?<=container_).+$|^host.+$|^stream$/g)
+        );
+        let prefix = containerColumns.includes(
+          filterProps[i].match(/_id$|(?<=container_).+$|^host.+$|^stream$/g)[0]
+        )
+          ? 'c.'
+          : 'l.';
+        if (j === 0)
+          queryExtension += `${
+            prefix +
+            filterProps[i].match(
+              /_id$|(?<=container_).+$|^host.+$|^stream$/g
+            )[0]
+          } IN (`;
         queryExtension += ' ?';
         if (arg[filterProps[i]][j + 1]) queryExtension += ',';
         params.push(arg[filterProps[i]][j]);

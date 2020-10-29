@@ -14,7 +14,7 @@ const CurrentFilters = (props) => {
       option.forEach((selection, i) => {
         buttons.push(
           <button
-						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full"
             id={selection}
             key={selection + el + i}
             onClick={() => {
@@ -33,7 +33,7 @@ const CurrentFilters = (props) => {
     if (el === 'timestamp' && option.from) {
       buttons.push(
         <button
-					className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+          className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full"
           id={el}
           key={el}
           onClick={() => {
@@ -47,7 +47,11 @@ const CurrentFilters = (props) => {
     }
   });
 
-  return <div id="current-filters-container">{buttons}</div>;
+  return (
+    <div id="current-filters-container" className="pt-5">
+      {buttons}
+    </div>
+  );
 };
 
 export default CurrentFilters;

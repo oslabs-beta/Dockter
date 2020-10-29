@@ -14,6 +14,7 @@ const LogsView = ({ filterOptions }) => {
 
   // TODO: Refactor this into it's own react component
   const logsToRender = logs.map((logEntry, i) => {
+    console.log(logEntry);
     // TODO: Coordinate naming throughout the project
     // TODO: Rename timestamp to time
     const {
@@ -41,8 +42,8 @@ const LogsView = ({ filterOptions }) => {
       }
       // TODO: console.log('log entry:', logEntry);
       // TODO: console.log('logEntry[option]:', logEntry)
-      if (currentOption.length && !currentOption.includes(logEntry[option])){
-      // console.log('returning null');
+      if (currentOption.length && !currentOption.includes(logEntry[option])) {
+        // console.log('returning null');
         return null;
       }
     }
@@ -56,6 +57,20 @@ const LogsView = ({ filterOptions }) => {
     // TODO: Decide if containerId slice should happen server-side
     return (
       <tr key={`log-row-${i}`} className="flex w-full mb-4">
+        <td className="px-6 py-4 w-56">
+          <div className="text-xs leading-5 text-gray-500">
+            {timestamp
+              ? new Date(timestamp).toUTCString()
+              : time
+              ? new Date(time).toUTCString()
+              : ''}
+          </div>
+        </td>
+        <td className="px-6 py-4 flex-grow">
+          <div className="text-sm leading-5 whitespace-normal text-gray-800">
+            {logWithAnsi}
+          </div>
+        </td>
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
           {container_id ? container_id.slice(0, 14) : ''}
         </td>
@@ -69,23 +84,15 @@ const LogsView = ({ filterOptions }) => {
           {host_port ? host_port : ''}
         </td>
         <td className="px-6 py-4 w-1/12">
-          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          <span
+            className={
+              stream === 'stderr'
+                ? 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'
+                : 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'
+            }
+          >
             {stream ? stream : ''}
           </span>
-        </td>
-        <td className="px-6 py-4 w-1/12">
-          <div className="text-xs leading-5 text-gray-500">
-            {timestamp
-              ? new Date(timestamp).toUTCString()
-              : time
-              ? new Date(time).toUTCString()
-              : ''}
-          </div>
-        </td>
-        <td className="px-6 py-4 w-6/12">
-          <div className="text-sm leading-5 whitespace-normal text-gray-800">
-            {logWithAnsi}
-          </div>
         </td>
         {/*
 						<td className="px-6 py-4 w-1/5">
@@ -100,7 +107,7 @@ const LogsView = ({ filterOptions }) => {
   useEffect(() => {
     ipcRenderer.on('shipLog', (event, newLog) => {
       setNewLog(newLog);
-      console.log('newLog: ', newLog)
+      console.log('newLog: ', newLog);
     });
   }, []);
 
@@ -115,7 +122,7 @@ const LogsView = ({ filterOptions }) => {
 
   // Filter logic
   useEffect(() => {
-    console.log('useEffect in filterOptions ipcRendereer effect')
+    console.log('useEffect in filterOptions ipcRendereer effect');
     ipcRenderer.send('filter', filterOptions);
   }, [filterOptions]);
 
@@ -141,6 +148,12 @@ const LogsView = ({ filterOptions }) => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="flex w-full">
                 <tr className="flex w-full">
+                  <th className="bg-gray-100 px-6 py-3 w-56 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                    Timestamp
+                  </th>
+                  <th className="bg-gray-100 px-6 py-3 flex-grow bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                    Log
+                  </th>
                   <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                     Container ID
                   </th>
@@ -155,12 +168,6 @@ const LogsView = ({ filterOptions }) => {
                   </th>
                   <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                     Stream
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Timestamp
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 w-6/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Log
                   </th>
                   {/* <th className="px-6 py-3 w-1/5 bg-gray-50"></th> */}
                 </tr>
