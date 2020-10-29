@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import './main-process/dockter-log';
+import './main-process/filter';
 
 export default class AppUpdater {
   constructor() {
@@ -96,7 +97,6 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-    ipcRenderer.send('ready');
   });
 
   mainWindow.on('closed', () => {
@@ -117,7 +117,6 @@ const createWindow = async () => {
 
 //write another ipcrenderer.send to shutdown
 app.on('window-all-closed', () => {
-  // ipcRenderer.send('shutdown');
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {

@@ -1,28 +1,23 @@
-import React, { useState } from 'react';
-import styles from './LogsContainer.css';
+import React, { useState, useEffect } from 'react';
 import LogsView from '../components/LogsView.tsx';
 import Filter from '../components/Filter.tsx';
-import Sort from '../components/Sort.tsx';
-
-import { ipcRenderer } from 'electron';
 
 const LogsContainer = () => {
-	ipcRenderer.send('ready');
-
   const [sortBy, setSortBy] = useState('');
+  //TODO: Align column names across DB and front-end
   const [filterOptions, setFilterOptions] = useState({
-    containerId: [],
-    name: [],
-    image: [],
+    container_id: [],
+    container_name: [],
+    container_image: [],
     status: [],
     stream: [],
     timestamp: {
       from: '',
       to: '',
     },
-    hostIp: [],
-    hostPort: [],
-    logLevel: [],
+    host_ip: [],
+    host_port: [],
+    log_level: [],
   });
 
   return (
@@ -31,7 +26,6 @@ const LogsContainer = () => {
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
-			{/*<Sort sortBy={sortBy} setSortBy={setSortBy} />*/}
       <LogsView filterOptions={filterOptions} />
     </div>
   );
