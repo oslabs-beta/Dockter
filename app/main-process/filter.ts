@@ -34,7 +34,7 @@ ipcMain.on('filter', (event, arg) => {
     const params = [];
     for (let i = 0; i < filterProps.length; i++) {
       if (i > 0) {
-        queryExtension += ` AND `;
+        queryExtension += ` OR `;
       }
       console.log('filterProps: ', filterProps);
       for (let j = 0; j < arg[filterProps[i]].length; j++) {
@@ -72,6 +72,7 @@ ipcMain.on('filter', (event, arg) => {
     }
     const stmt = db.prepare(query);
     try {
+      console.log('stmt.all(params):', stmt.all(params));
       event.reply('reply-filter', stmt.all(params));
     } catch (err) {
       console.log('ERROR: ', err);
