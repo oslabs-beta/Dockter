@@ -50,4 +50,4 @@ npm-debug.log.*
 *.scss.d.ts
 
 # SQLite3
-db/database.sqlite3
+*.sqlite3

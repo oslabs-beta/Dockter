@@ -31,13 +31,22 @@ ipcMain.on('ready', (event, arg) => {
     //TODO: Get most updated log shipper code
     //TODO: Investigate whether to handle logic for object structuring here or in Dockter Log Shipper
     const { containerId, log, time, stream } = shippedLog;
-    const stmt = db.prepare(
-      `INSERT INTO logs (container_id, message, timestamp, stream)
-      VALUES (?, ?, ?, ?)`
-    );
-    stmt.run(containerId, log, time, stream);
-    //TODO: Align column name and DB
-    // shippedLog.container_id = containerId;
-    content.send('shipLog', shippedLog);
+    const container = docker.getContainer(containerId);
+    container.inspect((err, object) => {
+      let address = Object.keys(object.Config.ExposedPorts);
+      shippedLog.container_name = object.Name;
+      shippedLog.container_image = object.Config.Image
+      shippedLog.host_port = object.NetworkSettings.Ports[address[0]][0].HostPort
+      console.log(shippedLog);
+      const stmt = db.prepare(
+        `INSERT INTO logs (container_id, message, timestamp, stream)
+        VALUES (?, ?, ?, ?)`
+      );
+      stmt.run(containerId, log, time, stream);
+      //TODO: Align column name and DB
+      // shippedLog.container_id = containerId;
+      console.log('shippedLog: ', shippedLog);
+      content.send('shipLog', shippedLog);
+    })
   });
 });

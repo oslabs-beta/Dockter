@@ -39,8 +39,8 @@ const LogsView = ({ filterOptions }) => {
 
         if (date < from || date > to) return null;
       }
-      console.log('log entry:', logEntry);
-      // console.log('logEntry[option]:', logEntry)
+      // TODO: console.log('log entry:', logEntry);
+      // TODO: console.log('logEntry[option]:', logEntry)
       if (currentOption.length && !currentOption.includes(logEntry[option])){
       // console.log('returning null');
         return null;
@@ -100,6 +100,7 @@ const LogsView = ({ filterOptions }) => {
   useEffect(() => {
     ipcRenderer.on('shipLog', (event, newLog) => {
       setNewLog(newLog);
+      console.log('newLog: ', newLog)
     });
   }, []);
 
@@ -121,7 +122,7 @@ const LogsView = ({ filterOptions }) => {
   useEffect(() => {
     ipcRenderer.on('reply-filter', (event, arg) => {
       setLogs(arg);
-      console.log('arg on front-end: ', arg)
+      // console.log('arg on front-end: ', arg)
     });
   });
 
