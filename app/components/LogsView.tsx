@@ -95,9 +95,7 @@ const LogsView = ({ filterOptions }) => {
   });
 
   useEffect(() => {
-    console.log('LogsView: useEffect()');
-    ipcRenderer.on('shipNewLog', (event, newLog) => {
-      console.log('LogsContainer:', newLog);
+    ipcRenderer.on('shipLog', (event, newLog) => {
       setNewLog(newLog);
     });
   }, []);
@@ -128,10 +126,6 @@ const LogsView = ({ filterOptions }) => {
     // TODO: Error handler for empty table body
     tableBody.current.scrollTop = tableBody.current.scrollHeight;
   }, [logs]);
-
-  // ipcRenderer.on('filter', (event, arg) => {
-  //   setLogs(arg);
-  // })
 
   return (
     <div className="flex flex-col">
