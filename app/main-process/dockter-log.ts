@@ -23,7 +23,7 @@ ipcMain.on('ready', (event, arg) => {
         `INSERT OR IGNORE INTO containers (container_id, name, image, status, host_ip, host_port)
         VALUES (?, ?, ?, ?, ?, ?)`
       )
-      stmt.run(container.Id, container.Names[0], container.Image, container.Status, container.NetworkSettings.Networks.bridge.IPAddress, container.Ports[0].PublicPort)
+      stmt.run(container.Id, container.Names[0], container.Image, container.Status, container.NetworkSettings.Networks.bridge.IPAddress, container.Ports[0].PublicPort.toString().match(/^\d+/g)[0])
     });
   });
 
