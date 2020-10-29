@@ -8,6 +8,17 @@ const LogsView = (props) => {
 
   const logsToRender = logs.map((logEntry, i) => {
     const { containerId, time, log, stream } = logEntry;
+    const keys = Object.keys(props.filterOptions);
+    for (let i = 0; i < keys.length; i++) {
+      const option = keys[i];
+      let currentOption = props.filterOptions[option];
+      if (option === 'timestamp' && currentOption.to && currentOption.from) {
+        const date = new Date(time).getTime();
+        const from = new Date(currentOption.from).getTime();
+        const to = new Date(currentOption.to).getTime();
+        if (date < from || date > to) return null;.
+      }
+    }
     return (
       <tr key={`${i}`}>
         <td>{containerId}</td>
