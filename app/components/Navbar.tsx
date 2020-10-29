@@ -64,7 +64,7 @@ const Navbar = (props) => {
                 alt="Workflow logo"
               />
               <img
-                className="hidden lg:block h-8 w-auto"
+                className="hidden lg:block h-10 w-auto"
                 src="./assets/DockterLogo.png"
                 alt="Workflow logo"
               />
