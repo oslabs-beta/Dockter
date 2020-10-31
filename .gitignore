@@ -51,3 +51,7 @@ npm-debug.log.*
 
 # SQLite3
 *.sqlite3
+
+# Vim
+*.swp
+*.swo
