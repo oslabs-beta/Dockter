@@ -40,11 +40,7 @@ const LogsView = ({ filterOptions }) => {
         if (date < from || date > to) return null;
       }
 
-      if (
-        currentOption.length &&
-        !currentOption.includes(logEntry[option]) &&
-        idx === keys.length - 1
-      )
+      if (currentOption.length && !currentOption.includes(logEntry[option]))
         return null;
     }
 
