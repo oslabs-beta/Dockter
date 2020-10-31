@@ -23,7 +23,7 @@ ipcMain.on('ready', (event, arg) => {
         `INSERT OR IGNORE INTO containers (container_id, name, image, status, host_ip, host_port)
         VALUES (?, ?, ?, ?, ?, ?)`
       )
-      stmt.run(container.Id, container.Names[0], container.Image, container.Status, container.NetworkSettings.Networks.bridge.IPAddress, container.Ports[0].PublicPort)
+      stmt.run(container.Id, container.Names[0], container.Image, container.Status, container.NetworkSettings.Networks.bridge.IPAddress, container.Ports[0].PublicPort.toString().match(/^\d+/g)[0])
     });
   });
 
@@ -32,19 +32,21 @@ ipcMain.on('ready', (event, arg) => {
     //TODO: Investigate whether to handle logic for object structuring here or in Dockter Log Shipper
     const { containerId, log, time, stream } = shippedLog;
     const container = docker.getContainer(containerId);
+
     container.inspect((err, object) => {
       let address = Object.keys(object.Config.ExposedPorts);
       shippedLog.container_name = object.Name;
       shippedLog.container_image = object.Config.Image
       shippedLog.host_port = object.NetworkSettings.Ports[address[0]][0].HostPort
-      console.log(shippedLog);
+      // TODO: message and logs hold duplicate values
+      shippedLog.message = log;
+      //TODO: Align column name and DB
+      shippedLog.container_id = containerId;
       const stmt = db.prepare(
         `INSERT INTO logs (container_id, message, timestamp, stream)
         VALUES (?, ?, ?, ?)`
       );
       stmt.run(containerId, log, time, stream);
-      //TODO: Align column name and DB
-      // shippedLog.container_id = containerId;
       console.log('shippedLog: ', shippedLog);
       content.send('shipLog', shippedLog);
     })
