@@ -9,6 +9,7 @@ const convert = new Convert();
 
 const LogsView = ({ filterOptions }) => {
   const [newLog, setNewLog] = useState({ message: '' });
+  // Contains an array of all the logs that we will render
   const [logs, setLogs] = useState([]);
   const tableBody = useRef(null);
 
@@ -26,25 +27,41 @@ const LogsView = ({ filterOptions }) => {
       timestamp,
       message,
     } = logEntry;
+
+    // grabbing the keys from filterOptions prop turning into array
     const keys = Object.keys(filterOptions);
 
+    // iterating over keys
+    // check if a user has set any filterOptions that will exclude the current log
     for (let idx = 0; idx < keys.length; idx += 1) {
+      //option is the key of filterOption
       const option = keys[idx];
+      //current option is the value
       let currentOption = filterOptions[option];
 
+      // time check
+      // time has a 'to' and 'from' property
       if (option === 'timestamp' && currentOption.to && currentOption.from) {
+        // turn time type into UNIX time format
+        // slicing to take off milliseconds
         const date = new Date(timestamp.slice(0, 19)).getTime();
         const from = new Date(currentOption.from).getTime();
         const to = new Date(currentOption.to).getTime();
 
+        // date is from the log
+        // 'from' and 'to' is from user input
         if (date < from || date > to) return null;
       }
 
+      // TODO: Currently doesn't allow for multiple filter options
+      // Line is checking to see if incoming logs apply to certain filter criteria for live rendering
       if (currentOption.length && !currentOption.includes(logEntry[option]))
         return null;
     }
 
     // TODO: Decide on stripping ansi
+    // converts ansi to html styling, sanitize, and then parse into react component
+    // insurance against cross site scripting attacks(XSS)
     const logWithAnsi = message
       ? parse(DOMPurify.sanitize(convert.toHtml(message)))
       : '';
@@ -101,6 +118,7 @@ const LogsView = ({ filterOptions }) => {
   });
 
   useEffect(() => {
+    // TODO: Look into why logs state doesn't update within this ipc listener
     ipcRenderer.on('shipLog', (event, newLog) => {
       setNewLog(newLog);
     });
@@ -128,6 +146,7 @@ const LogsView = ({ filterOptions }) => {
     // Start scroll at bottom of logs view
 
     // TODO: Error handler for empty table body
+    //TODO: is this code necessary? see line 119
     tableBody.current.scrollTop = tableBody.current.scrollHeight;
   }, [logs]);
 
