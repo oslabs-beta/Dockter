@@ -1,6 +1,7 @@
 import React from 'react';
 
 const FilterOptions = ({ setSelection, setIsOpen }) => {
+  // TODO: this should use the filterOptions defined in LogsContainer.tsx
   const filterOptions = [
     'container_id',
     'container_name',
