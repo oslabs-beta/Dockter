@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import CurrentFilters from './CurrentFilters';
+import FilterInput from './FilterInput';
 import FilterOptions from './FilterOptions';
+import CurrentFilters from './CurrentFilters';
 
 const Filter = (props) => {
-  //a piece of local state to render the correct options to filter by
+  // A piece of local state to render the correct options to filter by
   const [selection, setSelection] = useState('');
 
-  //handles userInput into conditionally rendered input elements
-  //userinput changes with each key inputted
-  //on submit, sets filter options at the current text input
+  // Handles userInput into conditionally rendered input elements
+  // Userinput changes with each key inputted
+  // On submit, sets filter options at the current text input
   const [userInput, setUserInput] = useState('');
   const [fromTimestamp, setFromTimestamp] = useState({ date: '', time: '' });
   const [toTimestamp, setToTimestamp] = useState({ date: '', time: '' });
+
+  // State to check if filter menu is open
   const [isOpen, setIsOpen] = useState(false);
 
   const date = new Date();
@@ -40,7 +43,6 @@ const Filter = (props) => {
                       .split('_')
                       .map((word) => word[0].toUpperCase() + word.substr(1))
                       .join(' ')}
-                {/* <!-- Heroicon name: chevron-down --> */}
                 <svg
                   className="-mr-1 ml-2 h-5 w-5"
                   xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +69,7 @@ const Filter = (props) => {
             <FilterOptions setSelection={setSelection} setIsOpen={setIsOpen} />
           )}
         </div>
-        {/* conditionally renders input element for specfic options */}
+        {/* Conditionally renders input field only for the following options */}
         {(selection === 'container_id' ||
           selection === 'container_name' ||
           selection === 'container_image' ||
@@ -75,49 +77,57 @@ const Filter = (props) => {
           selection === 'host_ip' ||
           selection === 'host_port' ||
           selection === 'log_level') && (
-          <form className="w-full max-w-sm inline-block mx-4">
-            <div className="flex items-center border rounded-md border-teal-500">
-              <input
-                id="filter-input"
-                className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                type="text"
-                placeholder={`Enter a ${selection.replace('_', ' ')}...`}
-                aria-label="Full name"
-                onChange={(e) => {
-                  setUserInput(e.target.value);
-                }}
-                value={userInput}
-              ></input>
-              <button
-                className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded-r"
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
+          <FilterInput
+            selection={selection}
+            userInput={userInput}
+            setUserInput={setUserInput}
+            // TODO: filterOptions and setFilterOptions should be deconstructed
+            filterOptions={props.filterOptions}
+            setFilterOptions={props.setFilterOptions}
+          />
+          // <form className="w-full max-w-sm inline-block mx-4">
+          //   <div className="flex items-center border rounded-md border-teal-500">
+          //     <input
+          //       id="filter-input"
+          //       className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+          //       type="text"
+          //       placeholder={`Enter a ${selection.replace('_', ' ')}...`}
+          //       aria-label="Full name"
+          //       onChange={(e) => {
+          //         setUserInput(e.target.value);
+          //       }}
+          //       value={userInput}
+          //     ></input>
+          //     <button
+          //       className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded-r"
+          //       type="button"
+          //       onClick={(e) => {
+          //         e.preventDefault();
 
-                  // TODO: Add proper error handling
-                  if (userInput === '') return;
+          //         // TODO: Add proper error handling
+          //         if (userInput === '') return;
 
-                  if (!props.filterOptions[selection].includes(userInput)) {
-                    props.setFilterOptions({
-                      ...props.filterOptions,
-                      [selection]: [
-                        ...props.filterOptions[selection],
-                        userInput,
-                      ],
-                    });
-                  }
+          //         if (!props.filterOptions[selection].includes(userInput)) {
+          //           props.setFilterOptions({
+          //             ...props.filterOptions,
+          //             [selection]: [
+          //               ...props.filterOptions[selection],
+          //               userInput,
+          //             ],
+          //           });
+          //         }
 
-                  // Clear input field
-                  setUserInput('');
-                }}
-              >
-                Submit
-              </button>
-            </div>
-          </form>
+          //         // Clear input field
+          //         setUserInput('');
+          //       }}
+          //     >
+          //       Submit
+          //     </button>
+          //   </div>
+          // </form>
         )}
 
-        {/* conditionally renders stream options */}
+        {/* Conditionally renders stream options */}
         {selection === 'stream' && (
           <div className="inline-block relative w-48">
             {/* className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150" */}
