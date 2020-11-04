@@ -9,7 +9,7 @@ const io = require('socket.io-client');
 
 // TODO: Make port dynamic in case 8080 is taken
 // connects app to log shipper to the 8080 port
-const socket = io('http://localhost:8080');
+const socket = io('http://localhost:9050');
 
 // socket.emit('initializeLogger');
 // listens for 'ready' event to be sent from the front end (landingpage.tsx) and fires
@@ -21,6 +21,18 @@ ipcMain.on('ready', (event, arg) => {
   docker.listContainers((err, containers) => {
     // loop through each container
     containers.forEach((container) => {
+			console.log('container info --------------------------->', container);
+			const c = docker.getContainer(container.Id);
+			c.logs({ follow: true, stdout: true, stderr:true, timestamps: true }, (err, log) => {
+				console.log(log);
+				// console.log(container.Id, 'container logs:', log);
+				log.on('data', (chunk) => {
+					// console.log({
+						// message: chunk.toString(),
+						// container_id: container.Id,
+					// });
+				});
+			})
       // look for dockter log shipper within the container and exclude it
       // TODO: The check should be done through container id
       if (container.Names[0] !== '/dockter-log') {
@@ -30,14 +42,15 @@ ipcMain.on('ready', (event, arg) => {
         `INSERT OR IGNORE INTO containers (container_id, name, image, status, host_ip, host_port)
         VALUES (?, ?, ?, ?, ?, ?)`
       );
-      stmt.run(
-        container.Id,
-        container.Names[0],
-        container.Image,
-        container.Status,
-        container.NetworkSettings.Networks.bridge.IPAddress,
-        container.Ports[0].PublicPort.toString().match(/^\d+/g)[0]
-      );
+			// TODO: Accomodate for invalid/empty properties
+			stmt.run(
+				container.Id,
+				container.Names[0],
+				container.Image,
+				container.Status,
+				container.NetworkSettings.Networks.bridge? container.NetworkSettings.Networks.bridge.IPAddress : 'No IP',
+				container.Ports[0].PublicPort ? container.Ports[0].PublicPort.toString().match(/^\d+/g)[0] : 'No Host Port'
+			);
     });
   });
 
@@ -57,7 +70,7 @@ ipcMain.on('ready', (event, arg) => {
       shippedLog.container_name = object.Name;
       shippedLog.container_image = object.Config.Image;
       shippedLog.host_port =
-        object.NetworkSettings.Ports[address[0]][0].HostPort;
+        object.NetworkSettings.Ports[address[0]] ? object.NetworkSettings.Ports[address[0]][0].HostPort : 'No Host Port';
       // TODO: message and logs hold duplicate values
       shippedLog.message = log;
       //TODO: Align column name and DB
@@ -68,7 +81,7 @@ ipcMain.on('ready', (event, arg) => {
       );
       stmt.run(containerId, log, time, stream);
       // TODO: remove console.log
-      console.log('shippedLog: ', shippedLog);
+      // console.log('shippedLog: ', shippedLog);
       content.send('shipLog', shippedLog);
     });
   });
