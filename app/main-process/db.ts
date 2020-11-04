@@ -1,10 +1,12 @@
-import { ipcMain } from 'electron';
+// import { ipcMain } from 'electron';
 
 const Database = require('better-sqlite3');
 const path = require('path');
-
-const db = new Database(path.resolve(__dirname, '../../db/database.sqlite3'), { verbose: console.log })
-
+//on initialization, checks if this file exists, if not it will create it
+const db = new Database(path.resolve(__dirname, '../../db/database.sqlite3'), {
+  verbose: console.log,
+});
+//provides schema and creates table if table does not exist within the sqlite3 file
 db.exec(
   `CREATE TABLE IF NOT EXISTS containers (
     _id SERIAL,
@@ -27,7 +29,7 @@ db.exec(
     FOREIGN KEY (container_id) REFERENCES containers (container_id)
   )`
 );
-
+// ipc main used to close app to keep it secure
 // ipcMain.on('shutdown', (event, arg) => {
 //   db.close((err) => {
 //     if (err) {

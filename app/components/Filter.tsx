@@ -6,6 +6,8 @@ const Filter = (props) => {
   const [selection, setSelection] = useState('');
 
   //handles userInput into conditionally rendered input elements
+  //userinput changes with each key inputted
+  //on submit, sets filter options at the current text input
   const [userInput, setUserInput] = useState('');
   const [fromTimestamp, setFromTimestamp] = useState({ date: '', time: '' });
   const [toTimestamp, setToTimestamp] = useState({ date: '', time: '' });
