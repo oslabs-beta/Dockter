@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import LogsView from '../components/LogsView.tsx';
+import LogsTable from '../components/LogsTable.tsx';
 import Filter from '../components/Filter.tsx';
 
 const LogsContainer = () => {
@@ -26,7 +26,7 @@ const LogsContainer = () => {
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
-      <LogsView filterOptions={filterOptions} />
+      <LogsTable filterOptions={filterOptions} />
     </div>
   );
 };
