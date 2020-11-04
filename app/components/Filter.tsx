@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import FilterInput from './FilterInput';
 import FilterOptions from './FilterOptions';
+import FilterStreamOptions from './FilterStreamOptions';
 import CurrentFilters from './CurrentFilters';
 
-const Filter = (props) => {
+const Filter = ({ filterOptions, setFilterOptions }) => {
   // A piece of local state to render the correct options to filter by
   const [selection, setSelection] = useState('');
 
@@ -20,7 +21,7 @@ const Filter = (props) => {
   const date = new Date();
   const today = date.toISOString().slice(0, 10);
 
-  //TODO: check if currentTime can/should update constantly (ex: with setTimeout)
+  // TODO: Check if currentTime can/should update constantly (ex: with setTimeout)
   const currentTime = date.getHours() + ':' + date.getMinutes();
 
   return (
@@ -82,41 +83,17 @@ const Filter = (props) => {
             selection={selection}
             userInput={userInput}
             setUserInput={setUserInput}
-            // TODO: filterOptions and setFilterOptions should be deconstructed
-            filterOptions={props.filterOptions}
-            setFilterOptions={props.setFilterOptions}
+            filterOptions={filterOptions}
+            setFilterOptions={setFilterOptions}
           />
         )}
 
         {/* Conditionally renders stream options */}
         {selection === 'stream' && (
-          <div className="inline-block relative w-48">
-            {/* className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150" */}
-            <select
-              onChange={(e) => {
-                if (!props.filterOptions.stream.includes(e.target.value)) {
-                  props.setFilterOptions({
-                    ...props.filterOptions,
-                    stream: [...props.filterOptions.stream, e.target.value],
-                  });
-                }
-              }}
-              className="block appearance-none w-full rounded-md bg-white border border-gray-300 text-sm text-gray-700 hover:text-gray-500 mx-4 px-4 py-2 pr-8 leading-tight focus:outline-none"
-            >
-              <option>Select Stream</option>
-              <option>stdout</option>
-              <option>stderr</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
-            </div>
-          </div>
+          <FilterStreamOptions
+            filterOptions={filterOptions}
+            setFilterOptions={setFilterOptions}
+          />
         )}
 
         {/* conditionally renders timestamp options */}
@@ -161,7 +138,7 @@ const Filter = (props) => {
               className="font-bold px-4 ml-2 border-l"
               id="timestamp-submit"
               onClick={() => {
-                //TODO: error handling for invalid input (if to is later than from)
+                // TODO: Error handling for invalid input (if to is later than from)
                 if (
                   fromTimestamp.date &&
                   fromTimestamp.time &&
@@ -170,8 +147,8 @@ const Filter = (props) => {
                 ) {
                   const from = fromTimestamp.date + ' ' + fromTimestamp.time;
                   const to = toTimestamp.date + ' ' + toTimestamp.time;
-                  props.setFilterOptions({
-                    ...props.filterOptions,
+                  setFilterOptions({
+                    ...filterOptions,
                     timestamp: {
                       from: from,
                       to: to,
@@ -187,8 +164,8 @@ const Filter = (props) => {
       </div>
 
       <CurrentFilters
-        filterOptions={props.filterOptions}
-        setFilterOptions={props.setFilterOptions}
+        filterOptions={filterOptions}
+        setFilterOptions={setFilterOptions}
       />
     </div>
   );
