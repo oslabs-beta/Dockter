@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import FilterInput from './FilterInput';
 import FilterOptions from './FilterOptions';
 import FilterStreamOptions from './FilterStreamOptions';
+import FilterTimeOptions from './FilterTimeOptions';
 import CurrentFilters from './CurrentFilters';
 
 const Filter = ({ filterOptions, setFilterOptions }) => {
@@ -17,12 +18,6 @@ const Filter = ({ filterOptions, setFilterOptions }) => {
 
   // State to check if filter menu is open
   const [isOpen, setIsOpen] = useState(false);
-
-  const date = new Date();
-  const today = date.toISOString().slice(0, 10);
-
-  // TODO: Check if currentTime can/should update constantly (ex: with setTimeout)
-  const currentTime = date.getHours() + ':' + date.getMinutes();
 
   return (
     <div id="filter-container" className="my-8">
@@ -99,67 +94,14 @@ const Filter = ({ filterOptions, setFilterOptions }) => {
         {/* conditionally renders timestamp options */}
         {/* TODO: check if there is a better way of implementing a timestamp input, currently very bulky and annoying UX */}
         {selection === 'timestamp' && (
-          <div className="inline border rounded-md mx-4 pl-4 py-2">
-            <div className="inline pr-2 mr-2 border-r">From:</div>
-            <input
-              id="from-date-input"
-              type="date"
-              max={today}
-              onChange={(e) =>
-                setFromTimestamp({ ...fromTimestamp, date: e.target.value })
-              }
-            ></input>
-            <input
-              id="from-time-input"
-              type="time"
-              max={currentTime}
-              onChange={(e) => {
-                setFromTimestamp({ ...fromTimestamp, time: e.target.value });
-              }}
-            ></input>
-            <div className="inline pr-2 mr-2 border-r">To:</div>
-            <input
-              id="to-date-input"
-              type="date"
-              max={today}
-              onChange={(e) =>
-                setFromTimestamp({ ...fromTimestamp, date: e.target.value })
-              }
-            ></input>
-            <input
-              id="to-time-input"
-              type="time"
-              max={currentTime}
-              onChange={(e) =>
-                setToTimestamp({ ...fromTimestamp, time: e.target.value })
-              }
-            ></input>
-            <button
-              className="font-bold px-4 ml-2 border-l"
-              id="timestamp-submit"
-              onClick={() => {
-                // TODO: Error handling for invalid input (if to is later than from)
-                if (
-                  fromTimestamp.date &&
-                  fromTimestamp.time &&
-                  toTimestamp.date &&
-                  toTimestamp.time
-                ) {
-                  const from = fromTimestamp.date + ' ' + fromTimestamp.time;
-                  const to = toTimestamp.date + ' ' + toTimestamp.time;
-                  setFilterOptions({
-                    ...filterOptions,
-                    timestamp: {
-                      from: from,
-                      to: to,
-                    },
-                  });
-                }
-              }}
-            >
-              Submit
-            </button>
-          </div>
+          <FilterTimeOptions
+            filterOptions={filterOptions}
+            setFilterOptions={setFilterOptions}
+            fromTimestamp={fromTimestamp}
+            setFromTimestamp={setFromTimestamp}
+            toTimestamp={toTimestamp}
+            setToTimestamp={setToTimestamp}
+          />
         )}
       </div>
 
