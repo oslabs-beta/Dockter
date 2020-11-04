@@ -70,7 +70,7 @@ const Filter = (props) => {
           )}
         </div>
 
-        {/* Conditionally renders input field only for the following options */}
+        {/* Conditionally renders an input field only for the following options */}
         {(selection === 'container_id' ||
           selection === 'container_name' ||
           selection === 'container_image' ||
