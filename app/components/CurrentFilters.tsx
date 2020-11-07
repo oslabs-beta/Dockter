@@ -1,12 +1,12 @@
 import React from 'react';
 
-const CurrentFilters = (props) => {
+const CurrentFilters = ({ filterOptions, setFilterOptions }) => {
   const buttons = [];
   //TODO: add a remove all filters button
 
   //iterates over filterOption state
-  Object.keys(props.filterOptions).forEach((el) => {
-    const option = props.filterOptions[el];
+  Object.keys(filterOptions).forEach((el) => {
+    const option = filterOptions[el];
 
     //at each key check is property is an array
     if (Array.isArray(option) && option.length) {
@@ -19,8 +19,8 @@ const CurrentFilters = (props) => {
             key={selection + el + i}
             onClick={() => {
               //if user clicks on button, it will remove the filter from filterOptions
-              props.setFilterOptions({
-                ...props.filterOptions,
+              setFilterOptions({
+                ...filterOptions,
                 [el]: option.filter((element) => element !== selection),
               });
             }}
@@ -37,8 +37,8 @@ const CurrentFilters = (props) => {
           id={el}
           key={el}
           onClick={() => {
-            props.setFilterOptions({
-              ...props.filterOptions,
+            setFilterOptions({
+              ...filterOptions,
               [el]: { from: '', to: '' },
             });
           }}
