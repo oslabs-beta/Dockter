@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterInput component should match exact snapshot 1`] = `
+<form
+  className="w-full max-w-sm inline-block mx-4"
+>
+  <div
+    className="flex items-center border rounded-md border-teal-500"
+  >
+    <input
+      aria-label="Full name"
+      className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+      id="filter-input"
+      onChange={[Function]}
+      placeholder="Enter a ..."
+      type="text"
+      value=""
+    />
+    <button
+      className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded-r"
+      onClick={[Function]}
+      type="button"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+`;
