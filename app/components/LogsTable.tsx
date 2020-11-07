@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
 
-const LogsView = ({ filterOptions }) => {
+const LogsTable = ({ filterOptions }) => {
   const [newLog, setNewLog] = useState({ message: '' });
   // Contains an array of all the logs that we will render
   const [logs, setLogs] = useState([]);
@@ -87,4 +87,4 @@ const LogsView = ({ filterOptions }) => {
   );
 };
 
-export default LogsView;
+export default LogsTable;

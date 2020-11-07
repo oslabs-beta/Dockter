@@ -2,9 +2,9 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import renderer from 'react-test-renderer';
 
-import CurrentFilters from '../../../app/components/CurrentFilters';
+import FilterInput from '../../../app/components/FilterInput';
 
-describe('CurrentFilters component', () => {
+describe('FilterInput component', () => {
   // TODO: Update to match new schema
   let filterOptions = {
     container_id: [],
@@ -25,10 +25,18 @@ describe('CurrentFilters component', () => {
     filterOptions = newState;
   };
 
+  let selection = '';
+
+  let userInput = '';
+  const setUserInput = (input) => (userInput = input);
+
   it('should match exact snapshot', () => {
     const tree = renderer
       .create(
-        <CurrentFilters
+        <FilterInput
+          selection={selection}
+          userInput={userInput}
+          setUserInput={setUserInput}
           filterOptions={filterOptions}
           setFilterOptions={setFilterOptions}
         />

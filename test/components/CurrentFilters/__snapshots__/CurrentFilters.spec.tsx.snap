@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CurrentFilters component should match exact snapshot 1`] = `
+<div
+  className="pt-5"
+  id="current-filters-container"
+/>
+`;

@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterOptions component should match exact snapshot 1`] = `
+<div
+  className="origin-top-right absolute left-0 mt-2 py-1 w-56 rounded-md shadow-lg"
+>
+  <div
+    className="rounded-md bg-white shadow-xs"
+  >
+    <div
+      aria-labelledby="options-menu"
+      aria-orientation="vertical"
+      className="py-1"
+      role="menu"
+    >
+      <a
+        className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+        href="#"
+        id="filter-container_id"
+        onClick={[Function]}
+        role="menuitem"
+      >
+        Container id
+      </a>
+      <a
+        className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+        href="#"
+        id="filter-container_name"
+        onClick={[Function]}
+        role="menuitem"
+      >
+        Container name
+      </a>
+      <a
+        className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+        href="#"
+        id="filter-container_image"
+        onClick={[Function]}
+        role="menuitem"
+      >
+        Container image
+      </a>
+      <a
+        className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+        href="#"
+        id="filter-host_port"
+        onClick={[Function]}
+        role="menuitem"
+      >
+        Host port
+      </a>
+      <a
+        className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+        href="#"
+        id="filter-stream"
+        onClick={[Function]}
+        role="menuitem"
+      >
+        Stream
+      </a>
+      <a
+        className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+        href="#"
+        id="filter-timestamp"
+        onClick={[Function]}
+        role="menuitem"
+      >
+        Timestamp
+      </a>
+    </div>
+  </div>
+</div>
+`;

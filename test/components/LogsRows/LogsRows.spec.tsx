@@ -2,14 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import renderer from 'react-test-renderer';
 
-import LogsTable from '../../../app/components/LogsTable';
 import LogsRows from '../../../app/components/LogsRows';
 
-describe('LogsTable component', () => {
-  let wrapper;
-  // TODO: Change filterOptions to activeFilters
+describe('LogsRows component', () => {
   // TODO: Update to match new schema
-  const filterOptions = {
+  let filterOptions = {
     container_id: [],
     container_name: [],
     container_image: [],
@@ -24,19 +21,12 @@ describe('LogsTable component', () => {
     log_level: [],
   };
 
-  beforeAll(() => {
-    wrapper = shallow(<LogsTable filterOptions={filterOptions} />);
-  });
+  let logs = [];
 
   it('should match exact snapshot', () => {
     const tree = renderer
-      .create(<LogsTable filterOptions={filterOptions} />)
+      .create(<LogsRows logs={logs} filterOptions={filterOptions} />)
       .toJSON();
-
     expect(tree).toMatchSnapshot();
-  });
-
-  it('should have one LogsRows component', () => {
-    expect(wrapper.find(LogsRows)).toHaveLength(1);
   });
 });
