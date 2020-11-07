@@ -5,6 +5,7 @@ import renderer from 'react-test-renderer';
 import Filter from '../../../app/components/Filter';
 
 describe('Filter component', () => {
+  // TODO: Update to match new schema
   let filterOptions = {
     container_id: [],
     container_name: [],

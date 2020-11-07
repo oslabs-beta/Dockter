@@ -7,7 +7,8 @@ import LogsRows from '../../../app/components/LogsRows';
 
 describe('LogsTable component', () => {
   let wrapper;
-  // TODO: change filterOptions to activeFilters
+  // TODO: Change filterOptions to activeFilters
+  // TODO: Update to match new schema
   const filterOptions = {
     container_id: [],
     container_name: [],
