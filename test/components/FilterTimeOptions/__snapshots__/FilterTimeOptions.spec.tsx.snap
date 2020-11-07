@@ -17,7 +17,7 @@ exports[`FilterTimeOptions component should match exact snapshot 1`] = `
   />
   <input
     id="from-time-input"
-    max="15:6"
+    max="15:45"
     onChange={[Function]}
     type="time"
   />
@@ -34,7 +34,7 @@ exports[`FilterTimeOptions component should match exact snapshot 1`] = `
   />
   <input
     id="to-time-input"
-    max="15:6"
+    max="15:45"
     onChange={[Function]}
     type="time"
   />

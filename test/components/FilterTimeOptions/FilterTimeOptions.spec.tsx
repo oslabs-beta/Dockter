@@ -28,6 +28,8 @@ describe('FilterTimeOptions component', () => {
   let toTimeStamp = { date: '', time: '' };
   const setToTimeStamp = (newTimeStamp) => (toTimeStamp = newTimeStamp);
 
+  Date.now = jest.fn(() => 1604781916895);
+
   it('should match exact snapshot', () => {
     const tree = renderer
       .create(
