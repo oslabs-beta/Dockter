@@ -1,12 +1,9 @@
 import React from 'react';
-import { configure, shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import { shallow } from 'enzyme';
 import renderer from 'react-test-renderer';
 
 import LogsTable from '../../../app/components/LogsTable';
 import LogsRows from '../../../app/components/LogsRows';
-
-configure({ adapter: new Adapter() });
 
 describe('LogsTable component', () => {
   let wrapper;

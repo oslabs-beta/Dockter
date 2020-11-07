@@ -145,6 +145,9 @@
     ],
     "setupFiles": [
       "./internals/scripts/CheckBuildsExist.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/setupTests.js"
     ]
   },
   "devDependencies": {
