@@ -4,6 +4,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import renderer from 'react-test-renderer';
 
 import LogsTable from '../../../app/components/LogsTable';
+import LogsRows from '../../../app/components/LogsRows';
 
 configure({ adapter: new Adapter() });
 
@@ -35,5 +36,9 @@ describe('LogsTable component', () => {
       .toJSON();
 
     expect(tree).toMatchSnapshot();
+  });
+
+  it('should have one LogsRows component', () => {
+    expect(wrapper.find(LogsRows)).toHaveLength(1);
   });
 });
