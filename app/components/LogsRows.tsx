@@ -9,6 +9,7 @@ const LogsRows = ({ logs, filterOptions }) => {
   return logs.map((logEntry, i) => {
     // TODO: Coordinate naming throughout the project
     // TODO: Rename timestamp to time
+    // TODO: Update as per new schema
     const {
       container_id,
       container_name,
@@ -18,29 +19,40 @@ const LogsRows = ({ logs, filterOptions }) => {
       time,
       timestamp,
       message,
+      ports,
     } = logEntry;
 
-    // grabbing the keys from filterOptions prop turning into array
+    // Convert array of ports to a comma diliminated string
+    const portsStr = ports
+      .map((port) => {
+        const { IP, PrivatePort, PublicPort, Type } = port;
+
+        return IP && PrivatePort
+          ? `${IP}:${PublicPort} -> ${PrivatePort}/${Type}`
+          : `${PrivatePort}/${Type}`;
+      })
+      .join(', ');
+
+    // Grabbing the keys from filterOptions prop turning into array
     const keys = Object.keys(filterOptions);
 
-    // iterating over keys
-    // check if a user has set any filterOptions that will exclude the current log
+    // Check if a user has set any filterOptions that will exclude the current log
     for (let idx = 0; idx < keys.length; idx += 1) {
-      //option is the key of filterOption
+      // Option is the key of filterOption
       const option = keys[idx];
-      //current option is the value
+      // Current option is the value
       let currentOption = filterOptions[option];
 
-      // time check
-      // time has a 'to' and 'from' property
+      // Time check:
+      // Time has a 'to' and 'from' property
       if (option === 'timestamp' && currentOption.to && currentOption.from) {
-        // turn time type into UNIX time format
-        // slicing to take off milliseconds
+        // Turn time type into UNIX time format
+        // Slicing to take off milliseconds
         const date = new Date(timestamp.slice(0, 19)).getTime();
         const from = new Date(currentOption.from).getTime();
         const to = new Date(currentOption.to).getTime();
 
-        // date is from the log
+        // Date is from the log
         // 'from' and 'to' is from user input
         if (date < from || date > to) return null;
       }
@@ -51,8 +63,7 @@ const LogsRows = ({ logs, filterOptions }) => {
         return null;
     }
 
-    // converts ansi to html styling, sanitize, and then parse into react component
-    // insurance against cross site scripting attacks(XSS)
+    // Converts ansi escape codes to html styling, then sanitize (XSS), then parse into React component
     const logWithAnsi = message
       ? parse(DOMPurify.sanitize(convert.toHtml(message)))
       : '';
@@ -85,7 +96,9 @@ const LogsRows = ({ logs, filterOptions }) => {
           {container_image ? container_image : ''}
         </td>
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
-          {host_port ? host_port : ''}
+          // TODO: Test portsStr string template literal with new schema
+          {/* {host_port ? host_port : ''} */}
+          {portsStr}
         </td>
         <td className="px-6 py-4 w-1/12">
           <span
