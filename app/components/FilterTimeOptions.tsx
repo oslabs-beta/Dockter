@@ -8,7 +8,7 @@ const FilterTimeOptions = ({
   toTimestamp,
   setToTimestamp,
 }) => {
-  const date = new Date();
+  const date = new Date(Date.now());
   const today = date.toISOString().slice(0, 10);
 
   // TODO: Check if currentTime can/should update constantly (ex: with setTimeout)

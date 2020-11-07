@@ -2,9 +2,9 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import renderer from 'react-test-renderer';
 
-import CurrentFilters from '../../../app/components/CurrentFilters';
+import FilterStreamOptions from '../../../app/components/FilterStreamOptions';
 
-describe('CurrentFilters component', () => {
+describe('FilterStreamOptions component', () => {
   // TODO: Update to match new schema
   let filterOptions = {
     container_id: [],
@@ -21,14 +21,12 @@ describe('CurrentFilters component', () => {
     log_level: [],
   };
 
-  const setFilterOptions = (newState) => {
-    filterOptions = newState;
-  };
+  const setFilterOptions = (newState) => (filterOptions = newState);
 
   it('should match exact snapshot', () => {
     const tree = renderer
       .create(
-        <CurrentFilters
+        <FilterStreamOptions
           filterOptions={filterOptions}
           setFilterOptions={setFilterOptions}
         />
