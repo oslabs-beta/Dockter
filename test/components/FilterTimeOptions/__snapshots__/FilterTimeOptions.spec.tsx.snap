@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterTimeOptions component should match exact snapshot 1`] = `
+<div
+  className="inline border rounded-md mx-4 pl-4 py-2"
+>
+  <div
+    className="inline pr-2 mr-2 border-r"
+  >
+    From:
+  </div>
+  <input
+    id="from-date-input"
+    max="2020-11-07"
+    onChange={[Function]}
+    type="date"
+  />
+  <input
+    id="from-time-input"
+    max="15:6"
+    onChange={[Function]}
+    type="time"
+  />
+  <div
+    className="inline pr-2 mr-2 border-r"
+  >
+    To:
+  </div>
+  <input
+    id="to-date-input"
+    max="2020-11-07"
+    onChange={[Function]}
+    type="date"
+  />
+  <input
+    id="to-time-input"
+    max="15:6"
+    onChange={[Function]}
+    type="time"
+  />
+  <button
+    className="font-bold px-4 ml-2 border-l"
+    id="timestamp-submit"
+    onClick={[Function]}
+  >
+    Submit
+  </button>
+</div>
+`;
