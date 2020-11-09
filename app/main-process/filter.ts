@@ -4,6 +4,7 @@ import { db } from './db.ts';
 const Log = require('../models/logModel');
 const mongoose = require('mongoose');
 
+//TODO: Figure out better way to instantiate database
 console.log('THIS IS DB HYD', db);
 
 ipcMain.on('filter', (event, arg) => {
@@ -14,7 +15,6 @@ ipcMain.on('filter', (event, arg) => {
     if (key === 'timestamp' && arg[key].to) filterProps.push(key);
     else if (arg[key].length !== 0 && key !== 'timestamp')
       filterProps.push(key);
-    console.log('filterProps: ', filterProps);
   });
   // Need some sort of logic within this conditional in order to not throw Mongo ERROR
   if (filterProps.length === 0) {
@@ -39,34 +39,33 @@ ipcMain.on('filter', (event, arg) => {
       }
       if (filterProps[i] === 'private_port') {
         for (let j = 0; j < arg.private_port.length; j++) {
-          query.push({ ports.PrivatePort : arg.private_port[j] });
+          query.push({ 'ports.PrivatePort': parseInt(arg.private_port[j]) });
         }
         break;
       }
 
-      if (filterProps[i] === 'public_port'){
+      if (filterProps[i] === 'public_port') {
         for (let j = 0; j < arg.public_port.length; j++) {
-          query.push({ ports.PublicPort : arg.public_port[j] });
+          query.push({ 'ports.PublicPort': parseInt(arg.public_port[j]) });
         }
         break;
       }
-      if (filterProps[i] === 'host_ip'){
+      if (filterProps[i] === 'host_ip') {
         for (let j = 0; j < arg.host_ip.length; j++) {
-          query.push({ ports.IP : arg.host_ip[j] });
+          query.push({ 'ports.IP': arg.host_ip[j] });
         }
         break;
       }
-        for (let j = 0; j < arg[filterProps[i]].length; j++) {
-          query.push({ [filterProps[i]]: arg[filterProps[i]][j] });
-        }
-
+      for (let j = 0; j < arg[filterProps[i]].length; j++) {
+        query.push({ [filterProps[i]]: arg[filterProps[i]][j] });
+      }
     }
-    console.log('QUERY HYD:', query);
+
     Log.find({ $or: query }, (err, logs) => {
-      console.log('IM IN LOG.FIND');
       if (err) {
         console.log('ERROR HYD', err);
       } else {
+        //TODO: delete out console.log
         console.log('LOGGYGUY', logs);
         event.reply('reply-filter', logs);
       }
