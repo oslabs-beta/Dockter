@@ -1,7 +1,8 @@
 import { ipcMain, webContents } from 'electron';
 import stream from 'stream';
 import Docker from 'dockerode';
-// import { db } from './db.ts';
+const mongoose = require('mongoose');
+const Log = require('../models/logModel.ts');
 
 // Connects dockerode to this path to open up communication with docker api
 const scktPath =
@@ -19,7 +20,6 @@ ipcMain.on('ready', (event, arg) => {
   docker.listContainers((err, containers) => {
     containers.forEach((container) => {
       const c = docker.getContainer(container.Id);
-
       c.logs(
         { follow: true, stdout: true, stderr: true, timestamps: true },
         (logError, log) => {
@@ -31,13 +31,54 @@ ipcMain.on('ready', (event, arg) => {
             const stderr = new stream.PassThrough();
 
             c.modem.demuxStream(log, stdout, stderr);
-
             stdout.on('data', (chunk) => {
-              console.log('stdout:', chunk.toString());
+              const { Id, Image, Status, Names, Ports } = container;
+              const chunkString = chunk.toString();
+              const newLog = {
+                message: chunkString.slice(35),
+                container_id: Id,
+                container_name: Names[0],
+                container_image: Image,
+                timestamp: chunkString.slice(0, 30),
+                stream: 'stdout',
+                status: Status,
+                ports: Ports,
+              };
+              // console.log('newLog: ', newLog)
+              Log.create(newLog, (err, log) => {
+                if (err) {
+                  console.log('ERROR HYD: ', err);
+                } else {
+                  // console.log('log added successfully to DB');
+                }
+              });
+              console.log('newLog: ', newLog);
+              content.send('newLog', newLog);
             });
 
             stderr.on('data', (chunk) => {
-              console.log('stderr:', chunk.toString());
+              // console.log('stderr:', chunk.toString());
+              const { Id, Image, Status, Names, Ports } = container;
+              const chunkString = chunk.toString();
+              const newLog = {
+                message: chunkString.slice(35),
+                container_id: Id,
+                container_name: Names[0],
+                container_image: Image,
+                timestamp: chunkString.slice(0, 30),
+                stream: 'stderr',
+                status: Status,
+                ports: Ports,
+              };
+              // console.log('newLog: ', newLog);
+              Log.create(newLog, (err, log) => {
+                if (err) {
+                  console.log('ERROR HYD: ', err);
+                } else {
+                  // console.log('log added successfully to DB');
+                }
+              });
+              content.send('newLog', newLog);
             });
           }
         }
