@@ -2,26 +2,27 @@ import React from 'react';
 
 const CurrentFilters = ({ filterOptions, setFilterOptions }) => {
   const buttons = [];
-  //TODO: add a remove all filters button
 
-  //iterates over filterOption state
-  Object.keys(filterOptions).forEach((el) => {
-    const option = filterOptions[el];
+  // Iterates over filterOption state
+  Object.keys(filterOptions).forEach((filterCategory) => {
+    const option = filterOptions[filterCategory];
 
-    //at each key check is property is an array
+    // At each key check is property is an array
     if (Array.isArray(option) && option.length) {
-      //if property is an array, make a button for each selection
+      // If property is an array, make a button for each selection
       option.forEach((selection, i) => {
         buttons.push(
           <button
             className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full"
             id={selection}
-            key={selection + el + i}
+            key={selection + filterCategory + i}
             onClick={() => {
-              //if user clicks on button, it will remove the filter from filterOptions
+              // If user clicks on button, it will remove the filter from filterOptions
               setFilterOptions({
                 ...filterOptions,
-                [el]: option.filter((element) => element !== selection),
+                [filterCategory]: option.filter(
+                  (element) => element !== selection
+                ),
               });
             }}
           >
@@ -30,16 +31,16 @@ const CurrentFilters = ({ filterOptions, setFilterOptions }) => {
         );
       });
     }
-    if (el === 'timestamp' && option.from) {
+    if (filterCategory === 'timestamp' && option.from) {
       buttons.push(
         <button
           className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full"
-          id={el}
-          key={el}
+          id={filterCategory}
+          key={filterCategory}
           onClick={() => {
             setFilterOptions({
               ...filterOptions,
-              [el]: { from: '', to: '' },
+              [filterCategory]: { from: '', to: '' },
             });
           }}
         >{`From ${option.from} to ${option.to}`}</button>
@@ -47,9 +48,31 @@ const CurrentFilters = ({ filterOptions, setFilterOptions }) => {
     }
   });
 
+  const removeAllFilters = () => {
+    filterOptions.forEach((filterCategory) => {
+      if (filterCategory === 'timestamp') {
+        setFilterOptions({
+          ...filterOptions,
+          [filterCategory]: { from: '', to: '' },
+        });
+      } else {
+        setFilterOptions({
+          ...filterOptions,
+          [filterCategory]: [],
+        });
+      }
+    });
+  };
   return (
     <div id="current-filters-container" className="pt-5">
       {buttons}
+      <button
+        className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full"
+        id="remove-all-filters-btn"
+        onClick={removeAllFilters}
+      >
+        Remove all filters
+      </button>
     </div>
   );
 };
