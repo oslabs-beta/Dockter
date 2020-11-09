@@ -17,7 +17,7 @@ ipcMain.on('ready', (event, arg) => {
   // Since there is only 1, we grab it as the first element
   const content = webContents.getAllWebContents()[0];
 
-  docker.listContainers((err, containers) => {
+  docker.listContainers({ all: true }, (err, containers) => {
     containers.forEach((container) => {
       const c = docker.getContainer(container.Id);
       c.logs(
@@ -44,20 +44,20 @@ ipcMain.on('ready', (event, arg) => {
                 status: Status,
                 ports: Ports,
               };
-              // console.log('newLog: ', newLog)
-              Log.create(newLog, (err, log) => {
-                if (err) {
-                  console.log('ERROR HYD: ', err);
-                } else {
-                  // console.log('log added successfully to DB');
+              Log.findOneAndUpdate(
+                newLog,
+                newLog,
+                { upsert: true, new: true },
+                (err, log) => {
+                  if (err) {
+                    console.log('ERROR: ', err);
+                  }
                 }
-              });
-              console.log('newLog: ', newLog);
+              );
               content.send('newLog', newLog);
             });
 
             stderr.on('data', (chunk) => {
-              // console.log('stderr:', chunk.toString());
               const { Id, Image, Status, Names, Ports } = container;
               const chunkString = chunk.toString();
               const newLog = {
@@ -70,14 +70,16 @@ ipcMain.on('ready', (event, arg) => {
                 status: Status,
                 ports: Ports,
               };
-              // console.log('newLog: ', newLog);
-              Log.create(newLog, (err, log) => {
-                if (err) {
-                  console.log('ERROR HYD: ', err);
-                } else {
-                  // console.log('log added successfully to DB');
+              Log.findOneAndUpdate(
+                newLog,
+                newLog,
+                { upsert: true, new: true },
+                (err, log) => {
+                  if (err) {
+                    console.log('ERROR: ', err);
+                  }
                 }
-              });
+              );
               content.send('newLog', newLog);
             });
           }
