@@ -6,23 +6,33 @@ import parse from 'html-react-parser';
 const convert = new Convert();
 
 const LogsRows = ({ logs, filterOptions }) => {
-  return logs.map((logEntry, i) => {
+  return logs.map((log, i) => {
     // TODO: Coordinate naming throughout the project
     // TODO: Rename timestamp to time
     // TODO: Update as per new schema
     const {
+      // container_id,
+      // container_name,
+      // container_image,
+      // host_port,
+      // stream,
+      // time,
+      // timestamp,
+      // message,
+      // ports,
+      message,
       container_id,
       container_name,
       container_image,
-      host_port,
-      stream,
-      time,
       timestamp,
-      message,
+      stream,
+      status,
       ports,
-    } = logEntry;
+    } = log._doc;
 
     // Convert array of ports to a comma diliminated string
+    console.log('log:', log._doc);
+    console.log('ports:', ports);
     const portsStr = ports
       .map((port) => {
         const { IP, PrivatePort, PublicPort, Type } = port;
@@ -59,12 +69,12 @@ const LogsRows = ({ logs, filterOptions }) => {
 
       // TODO: Currently doesn't allow for multiple filter options
       // Line is checking to see if incoming logs apply to certain filter criteria for live rendering
-      if (currentOption.length && !currentOption.includes(logEntry[option]))
+      if (currentOption.length && !currentOption.includes(_doc[option]))
         return null;
     }
 
     // Converts ansi escape codes to html styling, then sanitize (XSS), then parse into React component
-    const logWithAnsi = message
+    const messageWithANSI = message
       ? parse(DOMPurify.sanitize(convert.toHtml(message)))
       : '';
 
@@ -74,16 +84,12 @@ const LogsRows = ({ logs, filterOptions }) => {
       <tr key={`log-row-${i}`} className="flex w-full mb-4">
         <td className="px-6 py-4 w-56">
           <div className="text-xs leading-5 text-gray-500">
-            {timestamp
-              ? new Date(timestamp).toUTCString()
-              : time
-              ? new Date(time).toUTCString()
-              : ''}
+            {timestamp ? new Date(timestamp).toUTCString() : ''}
           </div>
         </td>
         <td className="px-6 py-4 flex-grow">
           <div className="text-sm leading-5 whitespace-normal text-gray-800">
-            {logWithAnsi}
+            {messageWithANSI}
           </div>
         </td>
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
@@ -96,7 +102,7 @@ const LogsRows = ({ logs, filterOptions }) => {
           {container_image ? container_image : ''}
         </td>
         <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
-          // TODO: Test portsStr string template literal with new schema
+          {/* TODO: Test portsStr string template literal with new schema */}
           {/* {host_port ? host_port : ''} */}
           {portsStr}
         </td>

@@ -3,19 +3,33 @@ import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
 
 const LogsTable = ({ filterOptions }) => {
-  const [newLog, setNewLog] = useState({ message: '' });
+  // const [newLog, setNewLog] = useState({ message: '' });
+  const [newLog, setNewLog] = useState({
+    _doc: {
+      ports: [],
+      _id: '',
+      message: '',
+      container_id: '',
+      container_name: '',
+      container_image: '',
+      timestamp: '',
+      stream: '',
+      status: '',
+    },
+  });
   // Contains an array of all the logs that we will render
   const [logs, setLogs] = useState([]);
   const tableBody = useRef(null);
 
   useEffect(() => {
     // TODO: Look into why logs state doesn't update within this ipc listener
-    ipcRenderer.on('shipLog', (event, newLog) => {
+    ipcRenderer.on('newLog', (event, newLog) => {
       setNewLog(newLog);
     });
 
-    ipcRenderer.on('reply-filter', (event, arg) => {
-      setLogs(arg);
+    ipcRenderer.on('reply-filter', (event, newLogs) => {
+      console.log('newLogs:', newLogs);
+      setLogs(newLogs);
     });
   }, []);
 
@@ -35,9 +49,8 @@ const LogsTable = ({ filterOptions }) => {
 
   useEffect(() => {
     // Start scroll at bottom of logs view
-
     // TODO: Error handler for empty table body
-    //TODO: is this code necessary? see line 119
+    // TODO: is this code necessary? see line 119
     tableBody.current.scrollTop = tableBody.current.scrollHeight;
   }, [logs]);
 
