@@ -1,42 +1,90 @@
 import { ipcMain, webContents } from 'electron';
-import { StrictMode } from 'react';
-import { db } from './db.ts';
+import stream from 'stream';
+import Docker from 'dockerode';
+const mongoose = require('mongoose');
+const Log = require('../models/logModel.ts');
 
-const Docker = require('dockerode');
+// Connects dockerode to this path to open up communication with docker api
+const scktPath =
+  process.platform === 'win32'
+    ? '//./pipe/docker_engine'
+    : '/var/run/docker.sock';
+const docker = new Docker({ socketPath: scktPath });
 
-const docker = new Docker({socketPath: '/var/run/docker.sock'});
-const io = require('socket.io-client');
-
-const socket = io('http://localhost:8080');
-
-// socket.emit('initializeLogger');
-
+// Listens for 'ready' event to be sent from the front end (landingpage.tsx) and fires
 ipcMain.on('ready', (event, arg) => {
+  // getAllWebContents gives us all the open windows within electron
+  // Since there is only 1, we grab it as the first element
   const content = webContents.getAllWebContents()[0];
-  // console.log('content,', content);
-  content.send('testmessage', 'hello from ipc main');
 
-  docker.listContainers((err, containers) => {
+  docker.listContainers({ all: true }, (err, containers) => {
     containers.forEach((container) => {
-      if (container.Names[0] !== '/dockter-log') {
-        socket.emit('startLogCollection', container.Id);
-      }
-      const stmt = db.prepare(
-        `INSERT OR IGNORE INTO containers (container_id, name, image, status, host_ip, host_port)
-        VALUES (?, ?, ?, ?, ?, ?)`
-      )
-      stmt.run(container.Id, container.Names[0], container.Image, container.Status, container.NetworkSettings.Networks.bridge.IPAddress, container.Ports[0].PublicPort)
-    });
-  });
+      const c = docker.getContainer(container.Id);
+      c.logs(
+        { follow: true, stdout: true, stderr: true, timestamps: true },
+        (logError, log) => {
+          // TODO: Better error handling
+          if (logError) return console.log(logError);
 
-  socket.on('newLog', (shippedLog) => {
-    console.log('log: ', shippedLog);
-    const { containerId, log, time, stream } = shippedLog;
-    const stmt = db.prepare(
-      `INSERT INTO logs (container_id, message, timestamp, stream)
-      VALUES (?, ?, ?, ?)`
-    );
-    stmt.run(containerId, log, time, stream);
-    content.send('shipLog', shippedLog);
+          if (log) {
+            const stdout = new stream.PassThrough();
+            const stderr = new stream.PassThrough();
+
+            c.modem.demuxStream(log, stdout, stderr);
+            stdout.on('data', (chunk) => {
+              const { Id, Image, Status, Names, Ports } = container;
+              const chunkString = chunk.toString();
+              const newLog = {
+                message: chunkString.slice(35),
+                container_id: Id,
+                container_name: Names[0],
+                container_image: Image,
+                timestamp: chunkString.slice(0, 30),
+                stream: 'stdout',
+                status: Status,
+                ports: Ports,
+              };
+              Log.findOneAndUpdate(
+                newLog,
+                newLog,
+                { upsert: true, new: true },
+                (err, log) => {
+                  if (err) {
+                    console.log('ERROR: ', err);
+                  }
+                }
+              );
+              content.send('newLog', newLog);
+            });
+
+            stderr.on('data', (chunk) => {
+              const { Id, Image, Status, Names, Ports } = container;
+              const chunkString = chunk.toString();
+              const newLog = {
+                message: chunkString.slice(35),
+                container_id: Id,
+                container_name: Names[0],
+                container_image: Image,
+                timestamp: chunkString.slice(0, 30),
+                stream: 'stderr',
+                status: Status,
+                ports: Ports,
+              };
+              Log.findOneAndUpdate(
+                newLog,
+                newLog,
+                { upsert: true, new: true },
+                (err, log) => {
+                  if (err) {
+                    console.log('ERROR: ', err);
+                  }
+                }
+              );
+              content.send('newLog', newLog);
+            });
+          }
+        }
+      );
+    });
   });
 });

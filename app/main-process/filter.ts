@@ -1,80 +1,73 @@
 /* eslint-disable */
 import { ipcMain } from 'electron';
 import { db } from './db.ts';
+const Log = require('../models/logModel');
+const mongoose = require('mongoose');
+
+//TODO: Figure out better way to instantiate database
+console.log('THIS IS DB HYD', db);
 
 ipcMain.on('filter', (event, arg) => {
   const filterProps = [];
   const argKeys = Object.keys(arg);
-
   argKeys.forEach((key) => {
-    if (arg[key].length !== 0 && key !== 'timestamp') filterProps.push(key);
+    if (key === 'timestamp' && arg[key].to) filterProps.push(key);
+    else if (arg[key].length !== 0 && key !== 'timestamp')
+      filterProps.push(key);
   });
-
+  // Need some sort of logic within this conditional in order to not throw Mongo ERROR
   if (filterProps.length === 0) {
-    db.all(
-      `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
-        FROM logs l
-        INNER JOIN containers c
-        ON l.container_id = c.container_id`,
-      (error, rows) => {
-        if (error) console.log('ERROR', error);
-        event.reply('reply-filter', rows);
+    Log.find({}, (err, logs) => {
+      if (err) {
+        console.log('ERROR: ', err);
+      } else {
+        event.reply('reply-filter', logs);
       }
-    );
+    });
   } else {
-    let query = `SELECT l._id, l.message, l.timestamp, l.log_level, l.stream, l.container_id, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
-       FROM logs l
-       INNER JOIN containers c
-       ON l.container_id = c.container_id WHERE `;
-
-    let queryExtension = '';
-    const params = [];
+    const query = [];
     for (let i = 0; i < filterProps.length; i++) {
-      if (i > 0) {
-        queryExtension += ` AND `;
+      if (filterProps[i] === 'timestamp') {
+        query.push({
+          timestamp: {
+            $gte: new Date(arg.timestamp.from),
+            $lte: new Date(arg.timestamp.to),
+          },
+        });
+        break;
+      }
+      if (filterProps[i] === 'private_port') {
+        for (let j = 0; j < arg.private_port.length; j++) {
+          query.push({ 'ports.PrivatePort': parseInt(arg.private_port[j]) });
+        }
+        break;
+      }
+
+      if (filterProps[i] === 'public_port') {
+        for (let j = 0; j < arg.public_port.length; j++) {
+          query.push({ 'ports.PublicPort': parseInt(arg.public_port[j]) });
+        }
+        break;
+      }
+      if (filterProps[i] === 'host_ip') {
+        for (let j = 0; j < arg.host_ip.length; j++) {
+          query.push({ 'ports.IP': arg.host_ip[j] });
+        }
+        break;
       }
       for (let j = 0; j < arg[filterProps[i]].length; j++) {
-        const containerProps = [
-          'name',
-          'image',
-          'status',
-          'host_ip',
-          'host_port',
-        ];
-        let prefix = containerProps.includes(filterProps[i]) ? 'c.' : 'l.';
-        if (j === 0) queryExtension += `${prefix + filterProps[i]} IN (`;
-        queryExtension += ' ?';
-        if (arg[filterProps[i]][j + 1]) queryExtension += ',';
-        params.push(arg[filterProps[i]][j]);
+        query.push({ [filterProps[i]]: arg[filterProps[i]][j] });
       }
-      queryExtension += ')';
-      query += queryExtension;
-      queryExtension = '';
     }
-    db.all(query, params, (error, rows) => {
-      if (error) console.log('ERROR', error);
-      event.reply('reply-filter', rows);
+
+    Log.find({ $or: query }, (err, logs) => {
+      if (err) {
+        console.log('ERROR HYD', err);
+      } else {
+        //TODO: delete out console.log
+        console.log('LOGGYGUY', logs);
+        event.reply('reply-filter', logs);
+      }
     });
   }
 });
-
-// TIMESTAMP LOGIC
-// else if (filterProps.length === 1 && filterProps[0] === 'timestamp') {
-//   let argKey = arg.timestamp;
-//   const fromTime = argKey.from;
-//   console.log('from: ', fromTime);
-//   const toTime = argKey.to;
-//   console.log('to: ', toTime);
-//   // const singlePropObj = {};
-//   db.all(
-//     `SELECT l._id, l.message, l.timestamp, datetime('now') as timetell, l.log_level, l.stream, l.containerid, c.name as container_name, c.image as container_image, c.status as container_status, c.host_ip, c.host_port
-//       FROM logs l
-//       INNER JOIN containers c
-//       ON l.containerid = c.container_id
-//       WHERE l.timestamp BETWEEN Datetime('2020-10-21T01:03') and Datetime('2020-10-23T13:02')`,
-//     // [fromTime, toTime],
-//     (error, rows) => {
-//       if (error) console.log('ERROR', error);
-//       event.reply('reply-filter', rows);
-//     }
-//   );

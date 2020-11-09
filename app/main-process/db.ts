@@ -1,40 +1,23 @@
-import { ipcMain } from 'electron';
+const mongoose = require('mongoose');
 
-const Database = require('better-sqlite3');
-const path = require('path');
+const url = 'mongodb://127.0.0.1:27017/dockter';
 
-const db = new Database(path.resolve(__dirname, '../../db/database.sqlite3'), { verbose: console.log })
+mongoose
+  .connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
+  .catch((err) => console.log(err));
 
-db.exec(
-  `CREATE TABLE IF NOT EXISTS containers (
-    _id SERIAL PRIMARY KEY,
-    container_id VARCHAR(255),
-    name VARCHAR(255),
-    image VARCHAR(255),
-    status VARCHAR(255),
-    host_ip VARCHAR(255),
-    host_port VARCHAR(255)
-  )`
-);
-db.exec(
-  `CREATE TABLE IF NOT EXISTS logs (
-    _id SERIAL PRIMARY KEY,
-    container_id VARCHAR(255),
-    message VARCHAR(255),
-    timestamp VARCHAR(255),
-    log_level VARCHAR(255),
-    stream VARCHAR(255),
-    FOREIGN KEY (container_id) REFERENCES containers(container_id)
-  )`
-);
+const db = mongoose.connection;
 
-ipcMain.on('shutdown', (event, arg) => {
-  db.close((err) => {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log('Close the database connection.');
-  });
-})
+db.once('open', () => {
+  console.log('Database connected: ', url);
+});
+
+db.on('error', (err) => {
+  console.error('connection error: ', url);
+});
 
 export { db };
