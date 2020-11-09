@@ -15,8 +15,8 @@ import { app, BrowserWindow, ipcRenderer } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import './main-process/dockter-log'
-import './main-process/filter'
+import './main-process/dockter-log';
+import './main-process/filter';
 
 export default class AppUpdater {
   constructor() {
@@ -88,7 +88,6 @@ const createWindow = async () => {
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
-
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -116,7 +115,7 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
- //write another ipcrenderer.send to shutdown
+//write another ipcrenderer.send to shutdown
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
