@@ -4,7 +4,6 @@ import Filter from '../components/Filter.tsx';
 
 const LogsContainer = () => {
   const [sortBy, setSortBy] = useState('');
-  //TODO: Align column names across DB and front-end
   const [filterOptions, setFilterOptions] = useState({
     container_id: [],
     container_name: [],
