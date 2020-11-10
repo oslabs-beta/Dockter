@@ -21,23 +21,32 @@ ipcMain.on('ready', (event, arg) => {
     containers.forEach(async (container) => {
       const doesExist = await Container.exists({ container_id: container.Id });
 
+			// If container doesn't exist, create document for container in container collection
       if (!doesExist) {
         await Container.create({
           container_id: container.Id,
-          last_log: new Date(0).toString(),
+          last_log: new Date(Date.now()),
         });
       }
 
       const result = await Container.find({ container_id: container.Id });
-      const timeSinceLastLog = result[0].last_log;
+			// Convert last_log into a js Date
+      const timeSinceLastLog = new Date(result[0].last_log);
+			// Degrade precision for Linux OS
+      const timeSinceLastLogUnix = Math.floor(timeSinceLastLog.valueOf() / 1000);
+
+			// Remove logs where timestamp >= timeSinceLastLog to avoid duplication
+			await Log.deleteMany({ timestamp: { $gte: timeSinceLastLog } })
 
       const c = docker.getContainer(container.Id);
+
+			// Initiate following logs for container
       const log = await c.logs({
         follow: true,
         stdout: true,
         stderr: true,
         timestamps: true,
-        since: Date.parse(timeSinceLastLog),
+        since: timeSinceLastLogUnix,
       });
 
       if (log) {
@@ -53,13 +62,11 @@ ipcMain.on('ready', (event, arg) => {
             container_id: Id,
             container_name: Names[0],
             container_image: Image,
-            timestamp: chunkString.slice(0, 30),
+            timestamp: new Date(chunkString.slice(0, 30)),
             stream: 'stdout',
             status: Status,
             ports: Ports,
           };
-
-          // console.log('-----------------------> new log:', chunk.toString());
 
           const newLogToSend = await Log.findOneAndUpdate(
             newLog,
@@ -69,11 +76,10 @@ ipcMain.on('ready', (event, arg) => {
 
           await Container.findOneAndUpdate(
             { container_id: Id },
-            { $set: { last_log: chunkString.slice(0, 30) } },
+            { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
             { upsert: true, new: true }
           );
 
-          console.log('new log to send:', newLogToSend);
           content.send('newLog', newLogToSend);
         });
 
@@ -85,7 +91,7 @@ ipcMain.on('ready', (event, arg) => {
             container_id: Id,
             container_name: Names[0],
             container_image: Image,
-            timestamp: chunkString.slice(0, 30),
+            timestamp: new Date(chunkString.slice(0, 30)),
             stream: 'stderr',
             status: Status,
             ports: Ports,
@@ -99,10 +105,10 @@ ipcMain.on('ready', (event, arg) => {
 
           await Container.findOneAndUpdate(
             { container_id: Id },
-            { $set: { last_log: chunkString.slice(0, 30) } },
+            { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
             { upsert: true, new: true }
           );
-            
+
           content.send('newLog', newLogToSend);
         });
       }
