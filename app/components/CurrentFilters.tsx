@@ -2,9 +2,10 @@ import React from 'react';
 
 const CurrentFilters = ({ filterOptions, setFilterOptions }) => {
   const buttons = [];
+  const filterCategories = Object.keys(filterOptions);
 
   // Iterates over filterOption state
-  Object.keys(filterOptions).forEach((filterCategory) => {
+  filterCategories.forEach((filterCategory) => {
     const option = filterOptions[filterCategory];
 
     // At each key check is property is an array
@@ -49,20 +50,23 @@ const CurrentFilters = ({ filterOptions, setFilterOptions }) => {
   });
 
   const removeAllFilters = () => {
-    filterOptions.forEach((filterCategory) => {
-      if (filterCategory === 'timestamp') {
-        setFilterOptions({
-          ...filterOptions,
-          [filterCategory]: { from: '', to: '' },
-        });
-      } else {
-        setFilterOptions({
-          ...filterOptions,
-          [filterCategory]: [],
-        });
-      }
+    // TODO: Make this dynamic
+    setFilterOptions({
+      container_id: [],
+      container_name: [],
+      container_image: [],
+      status: [],
+      stream: [],
+      timestamp: {
+        from: '',
+        to: '',
+      },
+      host_ip: [],
+      host_port: [],
+      log_level: [],
     });
   };
+
   return (
     <div id="current-filters-container" className="pt-5">
       {buttons}
