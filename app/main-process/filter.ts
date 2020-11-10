@@ -7,6 +7,9 @@ const mongoose = require('mongoose');
 //TODO: Figure out better way to instantiate database
 console.log('THIS IS DB HYD', db);
 
+//array to handle no duplicate logs when scrolling
+const nin = [];
+
 ipcMain.on('filter', (event, arg) => {
   console.log('arg: ', arg);
   const filterProps = [];
@@ -18,13 +21,23 @@ ipcMain.on('filter', (event, arg) => {
   });
   // Need some sort of logic within this conditional in order to not throw Mongo ERROR
   if (filterProps.length === 0) {
-    Log.find({}, (err, logs) => {
-      if (err) {
-        console.log('ERROR: ', err);
-      } else {
-        event.reply('reply-filter', logs);
-      }
-    }).sort({ timestamp: 1 });
+    // Log.find({}, (err, logs) => {
+    //   if (err) {
+    //     console.log('ERROR: ', err);
+    //   } else {
+    //     event.reply('reply-filter', logs);
+    //   }
+    // }).sort({ timestamp: 1 });
+    Log.find({})
+      .sort({ timestamp: -1 })
+      .limit(10)
+      .exec((err, logs) => {
+        if (err) console.log(err);
+        else {
+          logs.forEach((log) => nin.push(log._id));
+          event.reply('reply-filter', logs);
+        }
+      });
   } else {
     const query = [];
     for (let i = 0; i < filterProps.length; i++) {
@@ -71,4 +84,17 @@ ipcMain.on('filter', (event, arg) => {
       }
     });
   }
+});
+
+ipcMain.on('scroll', (event, arg) => {
+  Log.find({ _id: { $nin: nin } })
+    .sort({ timestamp: -1 })
+    .limit(10)
+    .exec((err, logs) => {
+      if (err) console.log(err);
+      else {
+        logs.forEach((log) => nin.push(log._id));
+        event.reply('scroll-reply', logs);
+      }
+    });
 });
