@@ -24,7 +24,7 @@ ipcMain.on('filter', (event, arg) => {
       } else {
         event.reply('reply-filter', logs);
       }
-    });
+    }).sort({ timestamp: 1 });
   } else {
     const query = [];
     for (let i = 0; i < filterProps.length; i++) {

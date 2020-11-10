@@ -1,8 +1,8 @@
 import { ipcMain, webContents } from 'electron';
 import stream from 'stream';
 import Docker from 'dockerode';
-const mongoose = require('mongoose');
-const Log = require('../models/logModel.ts');
+import Log from '../models/logModel';
+import Container from '../models/containerModel';
 
 // Connects dockerode to this path to open up communication with docker api
 const scktPath =
@@ -18,73 +18,94 @@ ipcMain.on('ready', (event, arg) => {
   const content = webContents.getAllWebContents()[0];
 
   docker.listContainers({ all: true }, (err, containers) => {
-    containers.forEach((container) => {
+    containers.forEach(async (container) => {
+      const doesExist = await Container.exists({ container_id: container.Id });
+
+      if (!doesExist) {
+        await Container.create({
+          container_id: container.Id,
+          last_log: new Date(0).toString(),
+        });
+      }
+
+      const result = await Container.find({ container_id: container.Id });
+      const timeSinceLastLog = result[0].last_log;
+
       const c = docker.getContainer(container.Id);
-      c.logs(
-        { follow: true, stdout: true, stderr: true, timestamps: true },
-        (logError, log) => {
-          // TODO: Better error handling
-          if (logError) return console.log(logError);
+      const log = await c.logs({
+        follow: true,
+        stdout: true,
+        stderr: true,
+        timestamps: true,
+        since: Date.parse(timeSinceLastLog),
+      });
 
-          if (log) {
-            const stdout = new stream.PassThrough();
-            const stderr = new stream.PassThrough();
+      if (log) {
+        const stdout = new stream.PassThrough();
+        const stderr = new stream.PassThrough();
 
-            c.modem.demuxStream(log, stdout, stderr);
-            stdout.on('data', (chunk) => {
-              const { Id, Image, Status, Names, Ports } = container;
-              const chunkString = chunk.toString();
-              const newLog = {
-                message: chunkString.slice(35),
-                container_id: Id,
-                container_name: Names[0],
-                container_image: Image,
-                timestamp: chunkString.slice(0, 30),
-                stream: 'stdout',
-                status: Status,
-                ports: Ports,
-              };
-              Log.findOneAndUpdate(
-                newLog,
-                { $set: newLog },
-                { upsert: true, new: true },
-                (err, log) => {
-                  if (err) {
-                    console.log('ERROR: ', err);
-                  }
-                }
-              );
-              content.send('newLog', newLog);
-            });
+        c.modem.demuxStream(log, stdout, stderr);
+        stdout.on('data', async (chunk) => {
+          const { Id, Image, Status, Names, Ports } = container;
+          const chunkString = chunk.toString();
+          const newLog = {
+            message: chunkString.slice(30),
+            container_id: Id,
+            container_name: Names[0],
+            container_image: Image,
+            timestamp: chunkString.slice(0, 30),
+            stream: 'stdout',
+            status: Status,
+            ports: Ports,
+          };
 
-            stderr.on('data', (chunk) => {
-              const { Id, Image, Status, Names, Ports } = container;
-              const chunkString = chunk.toString();
-              const newLog = {
-                message: chunkString.slice(35),
-                container_id: Id,
-                container_name: Names[0],
-                container_image: Image,
-                timestamp: chunkString.slice(0, 30),
-                stream: 'stderr',
-                status: Status,
-                ports: Ports,
-              };
-              Log.findOneAndUpdate(
-                newLog,
-                { $set: newLog },
-                { upsert: true, new: true },
-                (err, log) => {
-                  if (err) {
-                    console.log('ERROR: ', err);
-                  }
-                }
-              );
-              content.send('newLog', newLog);
-            });
-          }
-        }
-      );
+          // console.log('-----------------------> new log:', chunk.toString());
+
+          const newLogToSend = await Log.findOneAndUpdate(
+            newLog,
+            { $set: newLog },
+            { upsert: true, new: true }
+          );
+
+          await Container.findOneAndUpdate(
+            { container_id: Id },
+            { $set: { last_log: chunkString.slice(0, 30) } },
+            { upsert: true, new: true }
+          );
+
+          console.log('new log to send:', newLogToSend);
+          content.send('newLog', newLogToSend);
+        });
+
+        stderr.on('data', async (chunk) => {
+          const { Id, Image, Status, Names, Ports } = container;
+          const chunkString = chunk.toString();
+          const newLog = {
+            message: chunkString.slice(30),
+            container_id: Id,
+            container_name: Names[0],
+            container_image: Image,
+            timestamp: chunkString.slice(0, 30),
+            stream: 'stderr',
+            status: Status,
+            ports: Ports,
+          };
+
+          const newLogToSend = await Log.findOneAndUpdate(
+            newLog,
+            { $set: newLog },
+            { upsert: true, new: true }
+          );
+
+          await Container.findOneAndUpdate(
+            { container_id: Id },
+            { $set: { last_log: chunkString.slice(0, 30) } },
+            { upsert: true, new: true }
+          );
+            
+          content.send('newLog', newLogToSend);
+        });
+      }
     });
   });
 });
