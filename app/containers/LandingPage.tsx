@@ -6,6 +6,7 @@ import { ipcRenderer } from 'electron';
 
 export default function LandingPage() {
   ipcRenderer.send('ready');
+  ipcRenderer.send('ready-hidden');
 
   return (
     <>
