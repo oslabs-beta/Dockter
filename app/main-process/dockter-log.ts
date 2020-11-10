@@ -46,7 +46,7 @@ ipcMain.on('ready', (event, arg) => {
               };
               Log.findOneAndUpdate(
                 newLog,
-                newLog,
+                { $set: newLog },
                 { upsert: true, new: true },
                 (err, log) => {
                   if (err) {
@@ -72,7 +72,7 @@ ipcMain.on('ready', (event, arg) => {
               };
               Log.findOneAndUpdate(
                 newLog,
-                newLog,
+                { $set: newLog },
                 { upsert: true, new: true },
                 (err, log) => {
                   if (err) {
