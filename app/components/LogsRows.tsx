@@ -7,9 +7,6 @@ const convert = new Convert();
 
 const LogsRows = ({ logs, filterOptions }) => {
   return logs.map((log, i) => {
-    // TODO: Coordinate naming throughout the project
-    // TODO: Rename timestamp to time
-    // TODO: Update as per new schema
     const {
       // container_id,
       // container_name,
@@ -31,8 +28,6 @@ const LogsRows = ({ logs, filterOptions }) => {
     } = log._doc;
 
     // Convert array of ports to a comma diliminated string
-    console.log('log:', log._doc);
-    console.log('ports:', ports);
     const portsStr = ports
       .map((port) => {
         const { IP, PrivatePort, PublicPort, Type } = port;
@@ -69,7 +64,7 @@ const LogsRows = ({ logs, filterOptions }) => {
 
       // TODO: Currently doesn't allow for multiple filter options
       // Line is checking to see if incoming logs apply to certain filter criteria for live rendering
-      if (currentOption.length && !currentOption.includes(_doc[option]))
+      if (currentOption.length && !currentOption.includes(log._doc[option]))
         return null;
     }
 
