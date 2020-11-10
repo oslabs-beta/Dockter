@@ -21,7 +21,7 @@ ipcMain.on('ready', (event, arg) => {
     containers.forEach(async (container) => {
       const doesExist = await Container.exists({ container_id: container.Id });
 
-			// If container doesn't exist, create document for container in container collection
+      // If container doesn't exist, create document for container in container collection
       if (!doesExist) {
         await Container.create({
           container_id: container.Id,
@@ -30,17 +30,19 @@ ipcMain.on('ready', (event, arg) => {
       }
 
       const result = await Container.find({ container_id: container.Id });
-			// Convert last_log into a js Date
+      // Convert last_log into a js Date
       const timeSinceLastLog = new Date(result[0].last_log);
-			// Degrade precision for Linux OS
-      const timeSinceLastLogUnix = Math.floor(timeSinceLastLog.valueOf() / 1000);
+      // Degrade precision for Dockerode .logs method
+      const timeSinceLastLogUnix = Math.floor(
+        timeSinceLastLog.valueOf() / 1000
+      );
 
-			// Remove logs where timestamp >= timeSinceLastLog to avoid duplication
-			await Log.deleteMany({ timestamp: { $gte: timeSinceLastLog } })
+      // Remove logs where timestamp >= timeSinceLastLog to avoid duplication
+      await Log.deleteMany({ timestamp: { $gte: timeSinceLastLog } });
 
       const c = docker.getContainer(container.Id);
 
-			// Initiate following logs for container
+      // Initiate following logs for container
       const log = await c.logs({
         follow: true,
         stdout: true,
