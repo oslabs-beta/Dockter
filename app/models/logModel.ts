@@ -14,4 +14,4 @@ const logSchema = new Schema({
   log_level: { type: String },
 });
 
-module.exports = mongoose.model('Log', logSchema);
+export default mongoose.model('Log', logSchema);
