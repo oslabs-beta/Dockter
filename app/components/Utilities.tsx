@@ -1,6 +1,7 @@
 import React from 'react';
 import Filter from './Filter';
 import LiveLogController from './LiveLogController';
+import SearchBar from './SearchBar';
 
 const Utilities = ({
   filterOptions,
@@ -14,6 +15,7 @@ const Utilities = ({
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
+      <SearchBar />
       <LiveLogController
         listeningForNewLogs={listeningForNewLogs}
         setListeningForNewLogs={setListeningForNewLogs}
