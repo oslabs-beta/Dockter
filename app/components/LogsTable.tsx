@@ -85,12 +85,12 @@ const LogsTable = ({ filterOptions }) => {
                 <InfiniteScroll
                   dataLength={logs.length}
                   next={() => {
-                    ipcRenderer.send(
-                      'scroll',
-                      logs.map((log) => {
+                    ipcRenderer.send('scroll', {
+                      filterOptions,
+                      nin: logs.map((log) => {
                         return log._doc._id;
-                      })
-                    );
+                      }),
+                    });
                     ipcRenderer.on('scroll-reply', (event, arg) => {
                       setLogs([...logs, ...arg]);
                     });
