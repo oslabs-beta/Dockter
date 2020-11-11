@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { log } from 'console';
 import { ipcMain } from 'electron';
 import { db } from './db.ts';
 const Log = require('../models/logModel');
@@ -21,21 +22,25 @@ ipcMain.on('filter', (event, arg) => {
   });
   // Need some sort of logic within this conditional in order to not throw Mongo ERROR
   if (filterProps.length === 0) {
-    // Log.find({}, (err, logs) => {
-    //   if (err) {
-    //     console.log('ERROR: ', err);
-    //   } else {
-    //     event.reply('reply-filter', logs);
-    //   }
-    // }).sort({ timestamp: 1 });
     Log.find({})
       .sort({ timestamp: -1 })
       .limit(10)
       .exec((err, logs) => {
         if (err) console.log(err);
         else {
-          logs.forEach((log) => nin.push(log._id));
-          event.reply('reply-filter', logs);
+          // logs.forEach((log) => nin.push(log._id));
+          console.log('LOGS LENGTH TOP OF FILTER', logs.length);
+          event.reply(
+            'reply-filter',
+            logs.map((log) => {
+              console.log('logs', logs.length);
+              return {
+                ...log,
+                _id: log._id.toString(),
+                _doc: { ...log._doc, _id: log._id.toString() },
+              };
+            })
+          );
         }
       });
   } else {
@@ -80,21 +85,42 @@ ipcMain.on('filter', (event, arg) => {
       } else {
         //TODO: delete out console.log
         console.log('LOGGYGUY', logs);
-        event.reply('reply-filter', logs);
+        event.reply(
+          'reply-filter',
+          logs.map((log) => {
+            return {
+              ...log,
+              _id: log._id.toString(),
+              _doc: { ...log._doc, _id: log._id.toString() },
+            };
+          })
+        );
       }
     });
   }
 });
 
 ipcMain.on('scroll', (event, arg) => {
-  Log.find({ _id: { $nin: nin } })
+  //TODO: remove console log
+  console.log('this is arg', arg);
+  Log.find({ _id: { $nin: arg } })
     .sort({ timestamp: -1 })
     .limit(10)
     .exec((err, logs) => {
       if (err) console.log(err);
       else {
+        console.log('LOGs LENGTH', logs.length);
         logs.forEach((log) => nin.push(log._id));
-        event.reply('scroll-reply', logs);
+        const scrollReply = logs.map((log) => {
+          return {
+            ...log,
+            _id: log._id.toString(),
+            _doc: { ...log._doc, _id: log._id.toString() },
+          };
+        });
+        console.log('SCROLL REPLY', scrollReply.length);
+
+        event.reply('scroll-reply', scrollReply);
       }
     });
 });

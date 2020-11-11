@@ -29,14 +29,14 @@ const LogsTable = ({ filterOptions }) => {
     });
 
     ipcRenderer.on('reply-filter', (event, newLogs) => {
-      console.log('newLogs:', newLogs);
+      console.log('--------------------newLogs:', newLogs);
       setLogs(newLogs);
     });
   }, []);
 
-  useEffect(() => {
-    setLogs([newLog, ...logs]);
-  }, [newLog]);
+  // useEffect(() => {
+  //   setLogs([newLog, ...logs]);
+  // }, [newLog]);
 
   // Filter logic
   useEffect(() => {
@@ -80,11 +80,21 @@ const LogsTable = ({ filterOptions }) => {
                 className="bg-white flex flex-col items-center justify-between divide-y divide-gray-200 overflow-y-scroll"
                 style={{ height: '75vh' }}
               >
+                 
                 <InfiniteScroll
                   dataLength={logs.length}
                   next={() => {
-                    ipcRenderer.send('scroll');
+                    console.log('logs state length', logs.length);
+                    ipcRenderer.send(
+                      'scroll',
+                      logs.map((log) => {
+                        // console.log('LOG IN LOGSTABLE', log);
+                        return log._doc._id;
+                      })
+                    );
                     ipcRenderer.on('scroll-reply', (event, arg) => {
+                      console.log('scroll reply ARG length', arg);
+                      console.log('scroll-reply: logs', logs);
                       setLogs([...logs, ...arg]);
                     });
                   }}
