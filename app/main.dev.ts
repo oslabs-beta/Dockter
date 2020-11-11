@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import './main-process/dockter-log';
+import './main-process/hidden-dockter-log';
 import './main-process/filter';
 
 export default class AppUpdater {
@@ -27,6 +28,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let workerWindow: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -85,6 +87,14 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
+  // create hidden worker window
+  workerWindow = new BrowserWindow({
+    show: false,
+    webPreferences: { nodeIntegration: true },
+  });
+
+  workerWindow.loadURL(`file://${__dirname}/worker.html`);
+
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
@@ -102,6 +112,22 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // workerWindow.webContents.on('did-finish-load', () => {
+  //   if (!workerWindow) {
+  //     throw new Error('"mainWindow" is not defined');
+  //   }
+  //   if (process.env.START_MINIMIZED) {
+  //     workerWindow.minimize();
+  //   } else {
+  //     workerWindow.show();
+  //     workerWindow.focus();
+  //   }
+  // });
+
+  // workerWindow.on('closed', () => {
+  //   mainWindow = null;
+  // });
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
