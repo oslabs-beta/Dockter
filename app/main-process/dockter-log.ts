@@ -1,8 +1,14 @@
 import { ipcMain, webContents } from 'electron';
 import stream from 'stream';
+import path from 'path';
 import Docker from 'dockerode';
 import Log from '../models/logModel';
 import Container from '../models/containerModel';
+import {
+  applicationStartTime,
+  applicationStartTimeUnix,
+  pastLogCollectionComplete,
+} from './hidden-dockter-log';
 
 // Connects dockerode to this path to open up communication with docker api
 const scktPath =
@@ -11,34 +17,26 @@ const scktPath =
     : '/var/run/docker.sock';
 const docker = new Docker({ socketPath: scktPath });
 
-// Listens for 'ready' event to be sent from the front end (landingpage.tsx) and fires
-ipcMain.on('ready', (event, arg) => {
+async function collectLiveLogs() {
   // getAllWebContents gives us all the open windows within electron
-  // Since there is only 1, we grab it as the first element
-  const content = webContents.getAllWebContents()[0];
+  const content = webContents
+    .getAllWebContents()
+    .reduce((window, curr) =>
+      curr.getURL() === 'file://' + path.resolve(__dirname, '../app.html')
+        ? curr
+        : window
+    );
 
-  docker.listContainers({ all: true }, (err, containers) => {
-    containers.forEach(async (container) => {
-      const doesExist = await Container.exists({ container_id: container.Id });
-
-      // If container doesn't exist, create document for container in container collection
-      if (!doesExist) {
-        await Container.create({
-          container_id: container.Id,
-          last_log: new Date(Date.now()),
-        });
-      }
-
-      const result = await Container.find({ container_id: container.Id });
-      // Convert last_log into a js Date
-      const timeSinceLastLog = new Date(result[0].last_log);
-      // Degrade precision for Dockerode .logs method
-      const timeSinceLastLogUnix = Math.floor(
-        timeSinceLastLog.valueOf() / 1000
-      );
+  const containers = await docker.listContainers({ all: true });
+  containers.forEach(async (container) => {
+    try {
+      const { Id, Image, Status, Names, Ports } = container;
 
       // Remove logs where timestamp >= timeSinceLastLog to avoid duplication
-      await Log.deleteMany({ timestamp: { $gte: timeSinceLastLog } });
+      await Log.deleteMany({
+        container_id: Id,
+        timestamp: { $gte: applicationStartTime },
+      });
 
       const c = docker.getContainer(container.Id);
 
@@ -48,7 +46,7 @@ ipcMain.on('ready', (event, arg) => {
         stdout: true,
         stderr: true,
         timestamps: true,
-        since: timeSinceLastLogUnix,
+        since: applicationStartTimeUnix,
       });
 
       if (log) {
@@ -57,7 +55,6 @@ ipcMain.on('ready', (event, arg) => {
 
         c.modem.demuxStream(log, stdout, stderr);
         stdout.on('data', async (chunk) => {
-          const { Id, Image, Status, Names, Ports } = container;
           const chunkString = chunk.toString();
           const newLog = {
             message: chunkString.slice(30),
@@ -76,17 +73,19 @@ ipcMain.on('ready', (event, arg) => {
             { upsert: true, new: true }
           );
 
-          await Container.findOneAndUpdate(
-            { container_id: Id },
-            { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
-            { upsert: true, new: true }
-          );
+          // Container should only update if hidden-log collector has finished collecting past logs
+          if (pastLogCollectionComplete[Id]) {
+            await Container.findOneAndUpdate(
+              { container_id: Id },
+              { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
+              { upsert: true, new: true }
+            );
+          }
 
           content.send('newLog', newLogToSend);
         });
 
         stderr.on('data', async (chunk) => {
-          const { Id, Image, Status, Names, Ports } = container;
           const chunkString = chunk.toString();
           const newLog = {
             message: chunkString.slice(30),
@@ -105,15 +104,22 @@ ipcMain.on('ready', (event, arg) => {
             { upsert: true, new: true }
           );
 
-          await Container.findOneAndUpdate(
-            { container_id: Id },
-            { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
-            { upsert: true, new: true }
-          );
+          // Container should only update if hidden-log collector has finished collecting past logs
+          if (pastLogCollectionComplete[Id]) {
+            await Container.findOneAndUpdate(
+              { container_id: Id },
+              { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
+              { upsert: true, new: true }
+            );
+          }
 
           content.send('newLog', newLogToSend);
         });
       }
-    });
+    } catch (err) {
+      console.log(err);
+    }
   });
-});
+}
+
+export default collectLiveLogs;
