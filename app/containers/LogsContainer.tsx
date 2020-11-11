@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Utilities from '../components/Utilities';
 import LogsTable from '../components/LogsTable.tsx';
-import Filter from '../components/Filter.tsx';
 
 const LogsContainer = () => {
-  const [sortBy, setSortBy] = useState('');
+  const [listeningForNewLogs, setListeningForNewLogs] = useState(true);
   const [filterOptions, setFilterOptions] = useState({
     container_id: [],
     container_name: [],
@@ -20,12 +20,17 @@ const LogsContainer = () => {
   });
 
   return (
-    <div className="mx-8" data-tid="container">
-      <Filter
+    <div className="mx-8 border-solid" data-tid="container">
+      <Utilities
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
+        listeningForNewLogs={listeningForNewLogs}
+        setListeningForNewLogs={setListeningForNewLogs}
       />
-      <LogsTable filterOptions={filterOptions} />
+      <LogsTable
+        filterOptions={filterOptions}
+        listeningForNewLogs={listeningForNewLogs}
+      />
     </div>
   );
 };
