@@ -1,38 +1,30 @@
-/* eslint-disable */
 import { ipcMain } from 'electron';
-import { db } from './db.ts';
 import Log from '../models/logModel';
 
-//TODO: Figure out better way to instantiate database
-console.log('THIS IS DB HYD', db);
-
-ipcMain.on('filter', (event, arg) => {
-  console.log('this is arg', arg);
-  const filterOptions = arg;
+ipcMain.on('scroll', (event, arg) => {
+  const { filterOptions, nin } = arg;
   const filterProps = [];
   Object.keys(filterOptions).forEach((key) => {
     if (key === 'timestamp' && filterOptions[key].to) filterProps.push(key);
     else if (filterOptions[key].length !== 0 && key !== 'timestamp')
       filterProps.push(key);
   });
-  // Need some sort of logic within this conditional in order to not throw Mongo ERROR
-  if (filterProps.length === 0) {
-    Log.find({})
+  if (!filterProps.length) {
+    Log.find({ _id: { $nin: nin } })
       .sort({ timestamp: -1 })
-      .limit(100)
+      .limit(10)
       .exec((err, logs) => {
         if (err) console.log(err);
         else {
-          event.reply(
-            'reply-filter',
-            logs.map((log) => {
-              return {
-                ...log,
-                _id: log._id.toString(),
-                _doc: { ...log._doc, _id: log._id.toString() },
-              };
-            })
-          );
+          const scrollReply = logs.map((log) => {
+            return {
+              ...log,
+              _id: log._id.toString(),
+              _doc: { ...log._doc, _id: log._id.toString() },
+            };
+          });
+
+          event.reply('scroll-reply', scrollReply);
         }
       });
   } else {
@@ -74,18 +66,16 @@ ipcMain.on('filter', (event, arg) => {
         query.push({ [filterProps[i]]: filterOptions[filterProps[i]][j] });
       }
     }
-
-    Log.find({ $or: query })
+    console.log('NOT IN', nin);
+    Log.find({ $or: query, _id: { $nin: nin } })
       .sort({ timestamp: -1 })
-      .limit(100)
+      .limit(10)
       .exec((err, logs) => {
         if (err) {
           console.log('ERROR HYD', err);
         } else {
-          //TODO: delete out console.log
-          console.log('LOGGYGUY', logs);
           event.reply(
-            'reply-filter',
+            'scroll-reply',
             logs.map((log) => {
               return {
                 ...log,
