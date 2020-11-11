@@ -3,8 +3,7 @@ import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const LogsTable = ({ filterOptions }) => {
-  // const [newLog, setNewLog] = useState({ message: '' });
+const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
   const [newLog, setNewLog] = useState({
     _doc: {
       ports: [],
@@ -30,7 +29,6 @@ const LogsTable = ({ filterOptions }) => {
     });
 
     ipcRenderer.on('reply-filter', (event, newLogs) => {
-      console.log('--------------------newLogs:', newLogs);
       setLogs(newLogs);
     });
 
@@ -40,9 +38,9 @@ const LogsTable = ({ filterOptions }) => {
     
   }, []);
 
-  // useEffect(() => {
-  //   setLogs([newLog, ...logs]);
-  // }, [newLog]);
+  useEffect(() => {
+    if (listeningForNewLogs) setLogs([newLog, ...logs]);
+  }, [newLog]);
 
   // Filter logic
   useEffect(() => {
@@ -111,6 +109,10 @@ const LogsTable = ({ filterOptions }) => {
           </div>
         </div>
       </div>
+      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full absolute right-1/2 bottom-40 transform translate-x-1/2 shadow-md">
+        <span>Scroll To Top</span>
+        <i className="fas fa-arrow-up pl-2"></i>
+      </button>
     </div>
   );
 };

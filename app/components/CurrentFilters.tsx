@@ -49,34 +49,9 @@ const CurrentFilters = ({ filterOptions, setFilterOptions }) => {
     }
   });
 
-  const removeAllFilters = () => {
-    // TODO: Make this dynamic
-    setFilterOptions({
-      container_id: [],
-      container_name: [],
-      container_image: [],
-      status: [],
-      stream: [],
-      timestamp: {
-        from: '',
-        to: '',
-      },
-      host_ip: [],
-      host_port: [],
-      log_level: [],
-    });
-  };
-
   return (
     <div id="current-filters-container" className="pt-5">
       {buttons}
-      <button
-        className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full"
-        id="remove-all-filters-btn"
-        onClick={removeAllFilters}
-      >
-        Remove all filters
-      </button>
     </div>
   );
 };
