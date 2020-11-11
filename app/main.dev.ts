@@ -19,6 +19,7 @@ import './main-process/dockter-log';
 import './main-process/hidden-dockter-log';
 import './main-process/filter';
 import './main-process/scroll';
+import './main-process/search';
 
 export default class AppUpdater {
   constructor() {

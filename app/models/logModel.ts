@@ -14,4 +14,6 @@ const logSchema = new Schema({
   log_level: { type: String },
 });
 
+logSchema.index({ message: 'text' });
+
 export default mongoose.model('Log', logSchema);

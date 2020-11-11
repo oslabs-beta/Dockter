@@ -33,6 +33,11 @@ const LogsTable = ({ filterOptions }) => {
       console.log('--------------------newLogs:', newLogs);
       setLogs(newLogs);
     });
+
+    ipcRenderer.on('search-reply', (event, newLogs)=>{
+      setLogs(newLogs);
+    });
+    
   }, []);
 
   // useEffect(() => {
