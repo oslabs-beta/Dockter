@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LogsTable from '../components/LogsTable.tsx';
 import Filter from '../components/Filter.tsx';
+import SearchBar from '../components/SearchBar.tsx';
 
 const LogsContainer = () => {
   const [sortBy, setSortBy] = useState('');
@@ -25,6 +26,7 @@ const LogsContainer = () => {
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
+      <SearchBar />
       <LogsTable filterOptions={filterOptions} />
     </div>
   );
