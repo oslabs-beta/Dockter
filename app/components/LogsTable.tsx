@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const LogsTable = ({ filterOptions }) => {
   // const [newLog, setNewLog] = useState({ message: '' });
@@ -28,31 +29,19 @@ const LogsTable = ({ filterOptions }) => {
     });
 
     ipcRenderer.on('reply-filter', (event, newLogs) => {
-      console.log('newLogs:', newLogs);
+      console.log('--------------------newLogs:', newLogs);
       setLogs(newLogs);
     });
   }, []);
 
-  useEffect(() => {
-    setLogs([...logs, newLog]);
-  }, [newLog]);
-
-  useEffect(() => {
-    // TODO: Add error handler for null tableBody
-    tableBody.current.scrollTop = tableBody.current.scrollHeight;
-  }, [newLog]);
+  // useEffect(() => {
+  //   setLogs([newLog, ...logs]);
+  // }, [newLog]);
 
   // Filter logic
   useEffect(() => {
     ipcRenderer.send('filter', filterOptions);
   }, [filterOptions]);
-
-  useEffect(() => {
-    // Start scroll at bottom of logs view
-    // TODO: Error handler for empty table body
-    // TODO: is this code necessary? see line 119
-    tableBody.current.scrollTop = tableBody.current.scrollHeight;
-  }, [logs]);
 
   return (
     <div className="flex flex-col">
@@ -86,11 +75,35 @@ const LogsTable = ({ filterOptions }) => {
                 </tr>
               </thead>
               <tbody
+                id="scrollable-table"
                 ref={tableBody}
                 className="bg-white flex flex-col items-center justify-between divide-y divide-gray-200 overflow-y-scroll"
                 style={{ height: '75vh' }}
               >
-                <LogsRows logs={logs} filterOptions={filterOptions} />
+                 
+                <InfiniteScroll
+                  dataLength={logs.length}
+                  next={() => {
+                    console.log('logs state length', logs.length);
+                    ipcRenderer.send(
+                      'scroll',
+                      logs.map((log) => {
+                        // console.log('LOG IN LOGSTABLE', log);
+                        return log._doc._id;
+                      })
+                    );
+                    ipcRenderer.on('scroll-reply', (event, arg) => {
+                      console.log('scroll reply ARG length', arg);
+                      console.log('scroll-reply: logs', logs);
+                      setLogs([...logs, ...arg]);
+                    });
+                  }}
+                  scrollableTarget="scrollable-table"
+                  hasMore={true}
+                  loader={<h4>Loading...</h4>}
+                >
+                  <LogsRows logs={logs} filterOptions={filterOptions} />
+                </InfiniteScroll>
               </tbody>
             </table>
           </div>
