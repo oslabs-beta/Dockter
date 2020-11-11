@@ -144,6 +144,9 @@ ipcMain.on('ready', async (event, arg) => {
         });
 
         log.on('close', () => {
+          console.log(
+            `All caught up! No more logs to collection for container: ${Names}`
+          );
           pastLogCollectionComplete[Id] = true;
         });
       }
