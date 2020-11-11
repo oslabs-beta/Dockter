@@ -1,9 +1,7 @@
 /* eslint-disable */
-import { log } from 'console';
 import { ipcMain } from 'electron';
 import { db } from './db.ts';
-const Log = require('../models/logModel');
-const mongoose = require('mongoose');
+import Log from '../models/logModel';
 
 //TODO: Figure out better way to instantiate database
 console.log('THIS IS DB HYD', db);
