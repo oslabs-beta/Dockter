@@ -26,6 +26,7 @@ const LogsTable = ({ filterOptions }) => {
     // TODO: Look into why logs state doesn't update within this ipc listener
     ipcRenderer.on('newLog', (event, newLog) => {
       setNewLog(newLog);
+      // setLogs([newLog, ...logs]);
     });
 
     ipcRenderer.on('reply-filter', (event, newLogs) => {
@@ -84,17 +85,13 @@ const LogsTable = ({ filterOptions }) => {
                 <InfiniteScroll
                   dataLength={logs.length}
                   next={() => {
-                    console.log('logs state length', logs.length);
                     ipcRenderer.send(
                       'scroll',
                       logs.map((log) => {
-                        // console.log('LOG IN LOGSTABLE', log);
                         return log._doc._id;
                       })
                     );
                     ipcRenderer.on('scroll-reply', (event, arg) => {
-                      console.log('scroll reply ARG length', arg);
-                      console.log('scroll-reply: logs', logs);
                       setLogs([...logs, ...arg]);
                     });
                   }}

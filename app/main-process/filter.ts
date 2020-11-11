@@ -8,11 +8,7 @@ const mongoose = require('mongoose');
 //TODO: Figure out better way to instantiate database
 console.log('THIS IS DB HYD', db);
 
-//array to handle no duplicate logs when scrolling
-const nin = [];
-
 ipcMain.on('filter', (event, arg) => {
-  console.log('arg: ', arg);
   const filterProps = [];
   const argKeys = Object.keys(arg);
   argKeys.forEach((key) => {
@@ -29,11 +25,10 @@ ipcMain.on('filter', (event, arg) => {
         if (err) console.log(err);
         else {
           // logs.forEach((log) => nin.push(log._id));
-          console.log('LOGS LENGTH TOP OF FILTER', logs.length);
+
           event.reply(
             'reply-filter',
             logs.map((log) => {
-              console.log('logs', logs.length);
               return {
                 ...log,
                 _id: log._id.toString(),
@@ -101,8 +96,6 @@ ipcMain.on('filter', (event, arg) => {
 });
 
 ipcMain.on('scroll', (event, arg) => {
-  //TODO: remove console log
-  console.log('this is arg', arg);
   Log.find({ _id: { $nin: arg } })
     .sort({ timestamp: -1 })
     .limit(10)
@@ -110,7 +103,7 @@ ipcMain.on('scroll', (event, arg) => {
       if (err) console.log(err);
       else {
         console.log('LOGs LENGTH', logs.length);
-        logs.forEach((log) => nin.push(log._id));
+        // logs.forEach((log) => nin.push(log._id));
         const scrollReply = logs.map((log) => {
           return {
             ...log,
@@ -118,7 +111,6 @@ ipcMain.on('scroll', (event, arg) => {
             _doc: { ...log._doc, _id: log._id.toString() },
           };
         });
-        console.log('SCROLL REPLY', scrollReply.length);
 
         event.reply('scroll-reply', scrollReply);
       }
