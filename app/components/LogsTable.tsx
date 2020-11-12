@@ -51,28 +51,28 @@ const LogsTable = ({
   }, [filterOptions]);
 
   return (
-    <div className="h-screen75">
-      <div className="h-full flex flex-col">
+    <div className="h-screen75 w-screens">
+      <div className="h-full w-full flex flex-col">
         <div className="flex w-full">
-          <div className="rounded-tl-lg bg-gray-200 px-6 py-3 w-56 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="rounded-tl-lg bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Timestamp
           </div>
-          <div className="bg-gray-200 px-6 py-3 flex-grow bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-2/5 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Log
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Container ID
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Name
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Image
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Host Port
           </div>
-          <div className="rounded-tr-lg bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="rounded-tr-lg bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Stream
           </div>
         </div>
