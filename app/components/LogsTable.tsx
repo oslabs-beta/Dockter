@@ -32,10 +32,9 @@ const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
       setLogs(newLogs);
     });
 
-    ipcRenderer.on('search-reply', (event, newLogs)=>{
+    ipcRenderer.on('search-reply', (event, newLogs) => {
       setLogs(newLogs);
     });
-    
   }, []);
 
   useEffect(() => {
