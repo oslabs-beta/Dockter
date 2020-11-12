@@ -4,6 +4,7 @@ import LogsRows from '../components/LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
+  const [showScrollToTopBtn, setShowScrollToTopBtn] = useState(false);
   const [newLog, setNewLog] = useState({
     _doc: {
       ports: [],
@@ -22,10 +23,8 @@ const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
   const tableBody = useRef(null);
 
   useEffect(() => {
-    // TODO: Look into why logs state doesn't update within this ipc listener
     ipcRenderer.on('newLog', (event, newLog) => {
       setNewLog(newLog);
-      // setLogs([newLog, ...logs]);
     });
 
     ipcRenderer.on('reply-filter', (event, newLogs) => {
@@ -47,71 +46,76 @@ const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
   }, [filterOptions]);
 
   return (
-    <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="flex w-full">
-                <tr className="flex w-full">
-                  <th className="bg-gray-100 px-6 py-3 w-56 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Timestamp
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 flex-grow bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Log
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Container ID
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Image
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Host Port
-                  </th>
-                  <th className="bg-gray-100 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                    Stream
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                id="scrollable-table"
-                ref={tableBody}
-                className="bg-white flex flex-col items-center justify-between divide-y divide-gray-200 overflow-y-scroll"
-                style={{ height: '75vh' }}
-              >
-                 
-                <InfiniteScroll
-                  dataLength={logs.length}
-                  next={() => {
-                    ipcRenderer.send('scroll', {
-                      filterOptions,
-                      nin: logs.map((log) => {
-                        return log._doc._id;
-                      }),
-                    });
-                    ipcRenderer.on('scroll-reply', (event, arg) => {
-                      setLogs([...logs, ...arg]);
-                    });
-                  }}
-                  scrollableTarget="scrollable-table"
-                  hasMore={true}
-                  loader={<h4>Loading...</h4>}
-                >
-                  <LogsRows logs={logs} filterOptions={filterOptions} />
-                </InfiniteScroll>
-              </tbody>
-            </table>
+    <div className="h-screen75">
+      <div className="h-full flex flex-col">
+        <div className="flex w-full">
+          <div className="rounded-tl-lg bg-gray-200 px-6 py-3 w-56 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+            Timestamp
+          </div>
+          <div className="bg-gray-200 px-6 py-3 flex-grow bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+            Log
+          </div>
+          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+            Container ID
+          </div>
+          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+            Name
+          </div>
+          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+            Image
+          </div>
+          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+            Host Port
+          </div>
+          <div className="rounded-tr-lg bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+            Stream
           </div>
         </div>
+        <div
+          id="logs-container"
+          className="h-full overflow-y-scroll"
+          ref={tableBody}
+        >
+          <InfiniteScroll
+            className="w-full"
+            dataLength={logs.length}
+            next={() => {
+              ipcRenderer.send('scroll', {
+                filterOptions,
+                nin: logs.map((log) => {
+                  return log._doc._id;
+                }),
+              });
+              ipcRenderer.on('scroll-reply', (event, arg) => {
+                setLogs([...logs, ...arg]);
+              });
+            }}
+            scrollableTarget="logs-container"
+            hasMore={true}
+            loader={<h4>Loading...</h4>}
+            onScroll={() => {
+              if (tableBody.current.scrollTop > 20) setShowScrollToTopBtn(true);
+              else setShowScrollToTopBtn(false);
+            }}
+          >
+            <LogsRows logs={logs} filterOptions={filterOptions} />
+          </InfiniteScroll>
+        </div>
+        {showScrollToTopBtn && (
+          <button
+            className="bg-teal-500 hover:bg-teal-700 text-white font-normal py-2 px-4 mx-2 -my-2 rounded-full absolute right-1/2 bottom-40 transform translate-x-1/2 shadow-md text-sm"
+            onClick={() => {
+              tableBody.current.scrollTo({
+                top: 0,
+                behavior: 'auto',
+              });
+            }}
+          >
+            <span>Scroll To Top</span>
+            <i className="fas fa-arrow-up pl-2"></i>
+          </button>
+        )}
       </div>
-      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 mx-2 -my-2 rounded-full absolute right-1/2 bottom-40 transform translate-x-1/2 shadow-md">
-        <span>Scroll To Top</span>
-        <i className="fas fa-arrow-up pl-2"></i>
-      </button>
     </div>
   );
 };
