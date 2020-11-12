@@ -5,7 +5,7 @@ ipcMain.on('scroll', async (event, arg) => {
   const { filterOptions, nin } = arg;
   const filterProps = [];
 
-  const totalAmtOfLogs = await Log.find({}).count();
+  const totalAmtOfLogs = await Log.find({}).countDocuments();
   const hasNoMoreLogs = nin.length === totalAmtOfLogs;
 
   if (hasNoMoreLogs) {
