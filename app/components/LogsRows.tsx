@@ -53,16 +53,17 @@ const LogsRows = ({ logs, filterOptions }) => {
         filterProps.push(key);
     });
 
-    // Check if a user has set any filterOptions that will exclude the current log
-    for (let idx = 0; idx < filterProps.length; idx += 1) {
-      // Option is the key of filterOption
-      const option = filterProps[idx];
-      // Current option is the value
-      let currentOption = filterOptions[option];
+    // // Check if a user has set any filterOptions that will exclude the current log
+    filterProps.forEach((activeFilter) => {
+      let currentOption = filterOptions[activeFilter];
 
       // Time check:
       // Time has a 'to' and 'from' property
-      if (option === 'timestamp' && currentOption.to && currentOption.from) {
+      if (
+        activeFilter === 'timestamp' &&
+        currentOption.to &&
+        currentOption.from
+      ) {
         // Turn time type into UNIX time format
         // Slicing to take off milliseconds
         const date = new Date(timestamp.slice(0, 19)).getTime();
@@ -74,13 +75,18 @@ const LogsRows = ({ logs, filterOptions }) => {
         if (date > from || date < to) render = true;
       }
 
-      // TODO: Currently doesn't allow for multiple filter options
       // Line is checking to see if incoming logs apply to certain filter criteria for live rendering
-      if (currentOption.length && currentOption.includes(log._doc[option]))
+      if (
+        currentOption.length &&
+        currentOption.includes(log._doc[activeFilter])
+      )
         render = true;
-    }
+    });
+
+    //if there are no active filters, render the row
     if (!filterProps.length) render = true;
     if (!render) return null;
+
     // Converts ansi escape codes to html styling, then sanitize (XSS), then parse into React component
     const messageWithANSI = message
       ? parse(DOMPurify.sanitize(convert.toHtml(message)))
