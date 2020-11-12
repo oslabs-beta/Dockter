@@ -6,17 +6,27 @@ import { ipcRenderer } from 'electron';
 
 export default function LandingPage() {
   ipcRenderer.send('ready');
-  const [listeningForNewLogs, setListeningForNewLogs] = useState(true);
+  const [filterOptions, setFilterOptions] = useState({
+    container_id: [],
+    container_name: [],
+    container_image: [],
+    status: [],
+    stream: [],
+    timestamp: {
+      from: '',
+      to: '',
+    },
+    host_ip: [],
+    host_port: [],
+    search: '',
+  });
 
   return (
     <>
-      <Navbar
-        listeningForNewLogs={listeningForNewLogs}
-        setListeningForNewLogs={setListeningForNewLogs}
-      />
+      <Navbar filterOptions={filterOptions} />
       <LogsContainer
-        listeningForNewLogs={listeningForNewLogs}
-        setListeningForNewLogs={setListeningForNewLogs}
+        filterOptions={filterOptions}
+        setFilterOptions={setFilterOptions}
       />
     </>
   );

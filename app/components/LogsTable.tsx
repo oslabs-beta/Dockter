@@ -3,11 +3,7 @@ import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const LogsTable = ({
-  filterOptions,
-  listeningForNewLogs,
-  setListeningForNewLogs,
-}) => {
+const LogsTable = ({ filterOptions }) => {
   const [showScrollToTopBtn, setShowScrollToTopBtn] = useState(false);
   const [scrollForMoreLogs, setScrollForMoreLogs] = useState(true);
   const [newLog, setNewLog] = useState({
@@ -42,7 +38,7 @@ const LogsTable = ({
   }, []);
 
   useEffect(() => {
-    if (listeningForNewLogs) setLogs([newLog, ...logs]);
+    setLogs([newLog, ...logs]);
   }, [newLog]);
 
   // Filter logic
@@ -85,11 +81,6 @@ const LogsTable = ({
             className="w-full"
             dataLength={logs.length}
             next={() => {
-              console.log('Infinite scroll requests new logs');
-              if (listeningForNewLogs) {
-                setListeningForNewLogs(false);
-              }
-
               ipcRenderer.send('scroll', {
                 filterOptions,
                 nin: logs.map((log) => {

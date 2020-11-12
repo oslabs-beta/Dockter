@@ -25,9 +25,9 @@ async function collectLiveLogs() {
     return curr.getURL().match(reg) ? curr : window;
   });
 
-  const containers = await docker.listContainers({ all: true });
-  containers.forEach(async (container) => {
-    try {
+  try {
+    const containers = await docker.listContainers({ all: true });
+    const liveLogStreams = await containers.map(async (container) => {
       const { Id, Image, Status, Names, Ports } = container;
 
       // Remove logs where timestamp >= timeSinceLastLog to avoid duplication
@@ -126,11 +126,31 @@ async function collectLiveLogs() {
             },
           });
         });
+
+        return [stdout, stderr];
       }
-    } catch (err) {
-      console.log(err);
-    }
-  });
+    });
+
+    const streams = await Promise.all(liveLogStreams);
+
+    ipcMain.on('pauseLiveLogs', () => {
+      console.log('pause all streams');
+      streams.forEach(([stdout, stderr]) => {
+        stdout.pause();
+        stderr.pause();
+      });
+    });
+
+    ipcMain.on('resumeLiveLogs', () => {
+      console.log('resume all streams');
+      streams.forEach(([stdout, stderr]) => {
+        stdout.resume();
+        stderr.resume();
+      });
+    });
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export default collectLiveLogs;
