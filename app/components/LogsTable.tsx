@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
+const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs }) => {
   const [showScrollToTopBtn, setShowScrollToTopBtn] = useState(false);
+  const [scrollForMoreLogs, setScrollForMoreLogs] = useState(true);
   const [newLog, setNewLog] = useState({
     _doc: {
       ports: [],
@@ -24,6 +25,7 @@ const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
 
   useEffect(() => {
     ipcRenderer.on('newLog', (event, newLog) => {
+      console.log('this is newLog', newLog)
       setNewLog(newLog);
     });
 
@@ -80,6 +82,13 @@ const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
             className="w-full"
             dataLength={logs.length}
             next={() => {
+              console.log('Infinite scroll requests new logs');
+              if(listeningForNewLogs) {
+                console.log('before toggling setListeningForNewLogs', logs.length);
+                setListeningForNewLogs(false)
+                console.log('after toggling setListeningForNewLogs', logs.length);
+              }
+
               ipcRenderer.send('scroll', {
                 filterOptions,
                 nin: logs.map((log) => {
@@ -87,18 +96,24 @@ const LogsTable = ({ filterOptions, listeningForNewLogs }) => {
                 }),
               });
               ipcRenderer.on('scroll-reply', (event, arg) => {
-                setLogs([...logs, ...arg]);
+                // Args is either going to be a boolean or a more logs
+                // If typeof arg is bool, then we setScrollForMoreLogs(false);
+                if (typeof arg === 'boolean') setScrollForMoreLogs(false);
+                // Else, we update logs with setLogs
+                else setLogs([...logs, ...arg]);
               });
             }}
+            scrollThreshold={1}
             scrollableTarget="logs-container"
-            hasMore={true}
+            hasMore={scrollForMoreLogs}
             loader={<h4>Loading...</h4>}
+            endMessage={<h1>Logs are fully loaded</h1>}
             onScroll={() => {
               if (tableBody.current.scrollTop > 20) setShowScrollToTopBtn(true);
               else setShowScrollToTopBtn(false);
             }}
           >
-            <LogsRows logs={logs} filterOptions={filterOptions} />
+            {useMemo(()=><LogsRows logs={logs} filterOptions={filterOptions} />, [logs])}
           </InfiniteScroll>
         </div>
         {showScrollToTopBtn && (

@@ -7,12 +7,12 @@ const SearchBar = ({ filterOptions, setFilterOptions }) => {
 
   return (
     <form className="w-full max-w-sm inline-block mx-4">
-      <div className="flex items-center border rounded-md border-teal-500">
+      <div className="flex items-center border rounded-md border-teal-500 pt-0 mb-5">
         <input
           id="search-input"
           className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
           type="text"
-          placeholder={`Search logs...`}
+          placeholder={`Search log messages...`}
           aria-label=""
           onChange={(e) => {
             setSearch(e.target.value);

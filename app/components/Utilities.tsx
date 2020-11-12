@@ -10,7 +10,7 @@ const Utilities = ({ filterOptions, setFilterOptions }) => {
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
-      <SearchBar />
+      <SearchBar filterOptions={filterOptions} setFilterOptions={setFilterOptions} />
     </div>
   );
 };

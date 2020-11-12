@@ -4,7 +4,7 @@ import { db } from './db.ts';
 import Log from '../models/logModel';
 
 //TODO: Figure out better way to instantiate database
-console.log('THIS IS DB HYD', db);
+console.log('DB: ', db);
 
 ipcMain.on('filter', (event, arg) => {
   console.log('this is arg', arg);
@@ -19,7 +19,7 @@ ipcMain.on('filter', (event, arg) => {
   if (filterProps.length === 0) {
     Log.find({})
       .sort({ timestamp: -1 })
-      .limit(100)
+      .limit(50)
       .exec((err, logs) => {
         if (err) console.log(err);
         else {
