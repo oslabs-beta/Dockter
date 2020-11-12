@@ -1,5 +1,5 @@
 {
-  "name": "Dockter",
+  "name": "dockter",
   "productName": "Dockter",
   "version": "0.1.0",
   "description": "Low overhead, open-source Docker log management tool",
