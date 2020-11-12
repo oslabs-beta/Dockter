@@ -3,7 +3,11 @@ import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs }) => {
+const LogsTable = ({
+  filterOptions,
+  listeningForNewLogs,
+  setListeningForNewLogs,
+}) => {
   const [showScrollToTopBtn, setShowScrollToTopBtn] = useState(false);
   const [scrollForMoreLogs, setScrollForMoreLogs] = useState(true);
   const [newLog, setNewLog] = useState({
@@ -25,7 +29,6 @@ const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs 
 
   useEffect(() => {
     ipcRenderer.on('newLog', (event, newLog) => {
-      console.log('this is newLog', newLog)
       setNewLog(newLog);
     });
 
@@ -83,10 +86,8 @@ const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs 
             dataLength={logs.length}
             next={() => {
               console.log('Infinite scroll requests new logs');
-              if(listeningForNewLogs) {
-                console.log('before toggling setListeningForNewLogs', logs.length);
-                setListeningForNewLogs(false)
-                console.log('after toggling setListeningForNewLogs', logs.length);
+              if (listeningForNewLogs) {
+                setListeningForNewLogs(false);
               }
 
               ipcRenderer.send('scroll', {
@@ -113,7 +114,12 @@ const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs 
               else setShowScrollToTopBtn(false);
             }}
           >
-            {useMemo(()=><LogsRows logs={logs} filterOptions={filterOptions} />, [logs])}
+            {useMemo(
+              () => (
+                <LogsRows logs={logs} filterOptions={filterOptions} />
+              ),
+              [logs]
+            )}
           </InfiniteScroll>
         </div>
         {showScrollToTopBtn && (
