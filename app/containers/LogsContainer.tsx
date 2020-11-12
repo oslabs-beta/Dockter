@@ -29,6 +29,7 @@ const LogsContainer = ({ listeningForNewLogs, setListeningForNewLogs }) => {
       <LogsTable
         filterOptions={filterOptions}
         listeningForNewLogs={listeningForNewLogs}
+        setListeningForNewLogs={setListeningForNewLogs}
       />
     </div>
   );

@@ -68,7 +68,7 @@
 > - Docker - Platform as a Service
 > - React (Hooks) - Front-end Library
 > - Electron - Desktop Application Framework
-> - Tailwind CSS -
+> - Tailwind CSS
 > - MongoDB - noSQL Document Oriented database
 > - Mongoose - Object Data Modeling Library
 > - Jest - Testing Framework

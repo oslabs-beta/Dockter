@@ -81,8 +81,9 @@ async function collectLiveLogs() {
               { upsert: true, new: true }
             );
           }
-
-          content.send('newLog', newLogToSend);
+          content.send('newLog', {...newLogToSend,
+            _id: newLogToSend._id.toString(), 
+            _doc: {...newLogToSend._doc, _id: newLogToSend._doc._id.toString()}});
         });
 
         stderr.on('data', async (chunk) => {
@@ -112,8 +113,10 @@ async function collectLiveLogs() {
               { upsert: true, new: true }
             );
           }
-
-          content.send('newLog', newLogToSend);
+          
+          content.send('newLog', {...newLogToSend,
+            _id: newLogToSend._id.toString(), 
+            _doc: {...newLogToSend._doc, _id: newLogToSend._doc._id.toString()}});
         });
       }
     } catch (err) {
