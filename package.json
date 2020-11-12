@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
-  "version": "1.3.1",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "dockter",
+  "productName": "Dockter",
+  "version": "0.1.0",
+  "description": "Low overhead, open-source Docker log management tool",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -31,8 +31,8 @@
     "test-watch": "yarn test --watch"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "Dockter",
+    "appId": "",
     "files": [
       "dist/",
       "node_modules/",
@@ -78,40 +78,50 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate",
+      "owner": "Dockter",
+      "repo": "Dockter",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/oslabs-beta/Dockter.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "BANKS",
+    "email": "",
+    "url": "https://dockter.io"
   },
   "contributors": [
     {
-      "name": "Vikram Rangaraj",
-      "email": "vikr01@icloud.com",
-      "url": "https://github.com/vikr01"
+      "name": "Ben Brower",
+      "email": "",
+      "url": "https://github.com/bbrower21"
     },
     {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
+      "name": "Anup Ramdass",
+      "email": "",
+      "url": "https://github.com/anrax"
     },
     {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
+      "name": "Nancy Kousholt",
+      "email": "",
+      "url": "https://github.com/noodlemonkey"
+    },
+    {
+      "name": "Kyle Whang",
+      "email": "",
+      "url": "https://github.com/shaisle"
+    },
+    {
+      "name": "Samuel Kim",
+      "email": "",
+      "url": "https://github.com/samuy"
     }
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/oslabs-beta/Dockter/issues"
   },
   "keywords": [
     "electron",
@@ -125,7 +135,7 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/oslabs-beta/Dockter/README.md",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
@@ -202,6 +212,7 @@
     "cross-env": "^7.0.2",
     "css-loader": "^3.6.0",
     "detect-port": "^1.3.0",
+    "electron": "^10.1",
     "electron-builder": "^22.3.6",
     "electron-devtools-installer": "^2.2.4",
     "electron-rebuild": "^1.10.0",
@@ -242,7 +253,6 @@
     "@reduxjs/toolkit": "^1.4.0",
     "connected-react-router": "^6.6.1",
     "dockerode": "^3.2.1",
-    "electron": "8.2.5",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
@@ -252,6 +262,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.12.0",
     "react-hot-loader": "^4.12.21",
+    "react-infinite-scroll-component": "^5.1.0",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "react-table": "^7.6.0",
@@ -266,7 +277,7 @@
     "yarn": ">=0.21.3"
   },
   "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
+    "url": ""
   },
   "browserslist": [],
   "prettier": {

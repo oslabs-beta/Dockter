@@ -1,27 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import Utilities from '../components/Utilities';
 import LogsTable from '../components/LogsTable.tsx';
-import Filter from '../components/Filter.tsx';
 
-const LogsContainer = () => {
-  const [sortBy, setSortBy] = useState('');
-  const [filterOptions, setFilterOptions] = useState({
-    container_id: [],
-    container_name: [],
-    container_image: [],
-    status: [],
-    stream: [],
-    timestamp: {
-      from: '',
-      to: '',
-    },
-    host_ip: [],
-    host_port: [],
-    log_level: [],
-  });
-
+const LogsContainer = ({ filterOptions, setFilterOptions }) => {
   return (
     <div className="mx-8" data-tid="container">
-      <Filter
+      <Utilities
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />

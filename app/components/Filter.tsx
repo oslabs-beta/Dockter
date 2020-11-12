@@ -19,8 +19,26 @@ const Filter = ({ filterOptions, setFilterOptions }) => {
   // State to check if filter menu is open
   const [isOpen, setIsOpen] = useState(false);
 
+  const removeAllFilters = () => {
+    // TODO: Make this dynamic
+    setFilterOptions({
+      container_id: [],
+      container_name: [],
+      container_image: [],
+      status: [],
+      stream: [],
+      timestamp: {
+        from: '',
+        to: '',
+      },
+      host_ip: [],
+      host_port: [],
+      log_level: [],
+    });
+  };
+
   return (
-    <div id="filter-container" className="my-8">
+    <div id="filter-container" className="my-8 flex-grow">
       <div id="filter-options">
         <div className="relative inline-block text-left py-1">
           <div>
@@ -103,6 +121,14 @@ const Filter = ({ filterOptions, setFilterOptions }) => {
             setToTimestamp={setToTimestamp}
           />
         )}
+
+        <button
+          className="bg-red-100 border border-red-400 hover:bg-red-700 text-red-700 hover:text-white font-normal text-sm py-2 px-4 mx-2 my-2 rounded"
+          id="remove-all-filters-btn"
+          onClick={removeAllFilters}
+        >
+          Remove All Filters
+        </button>
       </div>
 
       <CurrentFilters

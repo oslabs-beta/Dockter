@@ -16,7 +16,9 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import './main-process/dockter-log';
+import './main-process/hidden-dockter-log';
 import './main-process/filter';
+import './main-process/scroll';
 
 export default class AppUpdater {
   constructor() {
@@ -27,6 +29,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let workerWindow: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -43,7 +46,7 @@ if (
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+  const extensions = ['REACT_DEVELOPER_TOOLS'];
 
   return Promise.all(
     extensions.map((name) => installer.default(installer[name], forceDownload))
@@ -83,7 +86,17 @@ const createWindow = async () => {
           },
   });
 
+  mainWindow.maximize();
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+
+  // create hidden worker window
+  workerWindow = new BrowserWindow({
+    show: false,
+    webPreferences: { nodeIntegration: true },
+  });
+
+  workerWindow.loadURL(`file://${__dirname}/worker.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -102,6 +115,22 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // workerWindow.webContents.on('did-finish-load', () => {
+  //   if (!workerWindow) {
+  //     throw new Error('"mainWindow" is not defined');
+  //   }
+  //   if (process.env.START_MINIMIZED) {
+  //     workerWindow.minimize();
+  //   } else {
+  //     workerWindow.show();
+  //     workerWindow.focus();
+  //   }
+  // });
+
+  // workerWindow.on('closed', () => {
+  //   mainWindow = null;
+  // });
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();

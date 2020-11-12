@@ -1,8 +1,14 @@
 import { ipcMain, webContents } from 'electron';
 import stream from 'stream';
+import path from 'path';
 import Docker from 'dockerode';
 import Log from '../models/logModel';
 import Container from '../models/containerModel';
+import {
+  applicationStartTime,
+  applicationStartTimeUnix,
+  pastLogCollectionComplete,
+} from './hidden-dockter-log';
 
 // Connects dockerode to this path to open up communication with docker api
 const scktPath =
@@ -11,33 +17,34 @@ const scktPath =
     : '/var/run/docker.sock';
 const docker = new Docker({ socketPath: scktPath });
 
-// Listens for 'ready' event to be sent from the front end (landingpage.tsx) and fires
-ipcMain.on('ready', (event, arg) => {
+async function collectLiveLogs() {
   // getAllWebContents gives us all the open windows within electron
-  // Since there is only 1, we grab it as the first element
-  const content = webContents.getAllWebContents()[0];
+  const content = webContents.getAllWebContents().reduce((window, curr) => {
+    const appWindow = `file:\/\/${path.resolve(__dirname, '../app')}`;
+    const reg = new RegExp(appWindow, 'g');
+    return curr.getURL().match(reg) ? curr : window;
+  });
 
-  docker.listContainers({ all: true }, (err, containers) => {
-    containers.forEach(async (container) => {
-      const doesExist = await Container.exists({ container_id: container.Id });
+  try {
+    const containers = await docker.listContainers({ all: true });
+    const liveLogStreams = await containers.map(async (container) => {
+      const { Id, Image, Status, Names, Ports } = container;
 
-      if (!doesExist) {
-        await Container.create({
-          container_id: container.Id,
-          last_log: new Date(0).toString(),
-        });
-      }
-
-      const result = await Container.find({ container_id: container.Id });
-      const timeSinceLastLog = result[0].last_log;
+      // Remove logs where timestamp >= timeSinceLastLog to avoid duplication
+      await Log.deleteMany({
+        container_id: Id,
+        timestamp: { $gte: applicationStartTime },
+      });
 
       const c = docker.getContainer(container.Id);
+
+      // Initiate following logs for container
       const log = await c.logs({
         follow: true,
         stdout: true,
         stderr: true,
         timestamps: true,
-        since: Date.parse(timeSinceLastLog),
+        since: applicationStartTimeUnix,
       });
 
       if (log) {
@@ -46,20 +53,17 @@ ipcMain.on('ready', (event, arg) => {
 
         c.modem.demuxStream(log, stdout, stderr);
         stdout.on('data', async (chunk) => {
-          const { Id, Image, Status, Names, Ports } = container;
           const chunkString = chunk.toString();
           const newLog = {
             message: chunkString.slice(30),
             container_id: Id,
             container_name: Names[0],
             container_image: Image,
-            timestamp: chunkString.slice(0, 30),
+            timestamp: new Date(chunkString.slice(0, 30)),
             stream: 'stdout',
             status: Status,
             ports: Ports,
           };
-
-          // console.log('-----------------------> new log:', chunk.toString());
 
           const newLogToSend = await Log.findOneAndUpdate(
             newLog,
@@ -67,25 +71,32 @@ ipcMain.on('ready', (event, arg) => {
             { upsert: true, new: true }
           );
 
-          await Container.findOneAndUpdate(
-            { container_id: Id },
-            { $set: { last_log: chunkString.slice(0, 30) } },
-            { upsert: true, new: true }
-          );
-
-          console.log('new log to send:', newLogToSend);
-          content.send('newLog', newLogToSend);
+          // Container should only update if hidden-log collector has finished collecting past logs
+          if (pastLogCollectionComplete[Id]) {
+            await Container.findOneAndUpdate(
+              { container_id: Id },
+              { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
+              { upsert: true, new: true }
+            );
+          }
+          content.send('newLog', {
+            ...newLogToSend,
+            _id: newLogToSend._id.toString(),
+            _doc: {
+              ...newLogToSend._doc,
+              _id: newLogToSend._doc._id.toString(),
+            },
+          });
         });
 
         stderr.on('data', async (chunk) => {
-          const { Id, Image, Status, Names, Ports } = container;
           const chunkString = chunk.toString();
           const newLog = {
             message: chunkString.slice(30),
             container_id: Id,
             container_name: Names[0],
             container_image: Image,
-            timestamp: chunkString.slice(0, 30),
+            timestamp: new Date(chunkString.slice(0, 30)),
             stream: 'stderr',
             status: Status,
             ports: Ports,
@@ -97,15 +108,49 @@ ipcMain.on('ready', (event, arg) => {
             { upsert: true, new: true }
           );
 
-          await Container.findOneAndUpdate(
-            { container_id: Id },
-            { $set: { last_log: chunkString.slice(0, 30) } },
-            { upsert: true, new: true }
-          );
-            
-          content.send('newLog', newLogToSend);
+          // Container should only update if hidden-log collector has finished collecting past logs
+          if (pastLogCollectionComplete[Id]) {
+            await Container.findOneAndUpdate(
+              { container_id: Id },
+              { $set: { last_log: new Date(chunkString.slice(0, 30)) } },
+              { upsert: true, new: true }
+            );
+          }
+
+          content.send('newLog', {
+            ...newLogToSend,
+            _id: newLogToSend._id.toString(),
+            _doc: {
+              ...newLogToSend._doc,
+              _id: newLogToSend._doc._id.toString(),
+            },
+          });
         });
+
+        return [stdout, stderr];
       }
     });
-  });
-});
+
+    const streams = await Promise.all(liveLogStreams);
+
+    ipcMain.on('pauseLiveLogs', () => {
+      console.log('pause all streams');
+      streams.forEach(([stdout, stderr]) => {
+        stdout.pause();
+        stderr.pause();
+      });
+    });
+
+    ipcMain.on('resumeLiveLogs', () => {
+      console.log('resume all streams');
+      streams.forEach(([stdout, stderr]) => {
+        stdout.resume();
+        stderr.resume();
+      });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export default collectLiveLogs;
