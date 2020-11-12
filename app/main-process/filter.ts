@@ -83,7 +83,7 @@ ipcMain.on('filter', (event, arg) => {
       }
     }
 
-    if (filterQuery.length) query.$or = filterQuery;
+    if (filterQuery.length) query.$and = filterQuery;
     if (searchFlag) query.$text = { $search: filterOptions.search };
 
     Log.find(query)
