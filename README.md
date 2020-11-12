@@ -3,9 +3,7 @@
 <p align="center">
   <img alt="GitHub" src="https://img.shields.io/github/license/oslabs-beta/Dockter?color=blue">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/oslabs-beta/Dockter?color=pink">
-   <!-- <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/oslabs-beta/Dockter/total?color=yellow"> -->
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/oslabs-beta/Dockter?color=green">
-  <img alt="Version" src="https://img.shields.io/github/package-json/v/open-source-labs/Dockter?color=orange">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/oslabs-beta/Dockter?style=social">  
 </p>
 
@@ -33,9 +31,6 @@
 # Prerequisites
 
 > Ensure that you have the following installed and running on your machine:
-
-    <br>
-
 > - [Docker Client](https://www.docker.com/get-started)
 > - [Running Docker Container(s)](https://docs.docker.com/get-started/)
 > - [Yarn Package Manager](https://classic.yarnpkg.com/en/docs/getting-started)
@@ -56,9 +51,6 @@
 >
 > (_if you have the [Github CLI](https://cli.github.com/) installed_)
 > in your terminal.
-
-    <br>
-
 > Next, `cd` into your cloned Docktor repository and run the following command to install all necessary dependencies
 >
 > ```
@@ -74,7 +66,7 @@
 # Built With
 
 > - Docker - Platform as a Service
-> - React (Hooks, Router?) - Front-end Library
+> - React (Hooks) - Front-end Library
 > - Electron - Desktop Application Framework
 > - Tailwind CSS -
 > - MongoDB - noSQL Document Oriented database
