@@ -86,6 +86,8 @@ const createWindow = async () => {
           },
   });
 
+  mainWindow.maximize();
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // create hidden worker window
