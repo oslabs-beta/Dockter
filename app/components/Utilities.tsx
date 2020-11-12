@@ -3,23 +3,14 @@ import Filter from './Filter';
 import LiveLogController from './LiveLogController';
 import SearchBar from './SearchBar';
 
-const Utilities = ({
-  filterOptions,
-  setFilterOptions,
-  listeningForNewLogs,
-  setListeningForNewLogs,
-}) => {
+const Utilities = ({ filterOptions, setFilterOptions }) => {
   return (
-    <div id="utilities-container" className="flex">
+    <div id="utilities-container" className="flex items-center">
       <Filter
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
       <SearchBar />
-      <LiveLogController
-        listeningForNewLogs={listeningForNewLogs}
-        setListeningForNewLogs={setListeningForNewLogs}
-      />
     </div>
   );
 };
