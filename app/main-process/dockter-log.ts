@@ -19,13 +19,11 @@ const docker = new Docker({ socketPath: scktPath });
 
 async function collectLiveLogs() {
   // getAllWebContents gives us all the open windows within electron
-  const content = webContents
-    .getAllWebContents()
-    .reduce((window, curr) =>
-      curr.getURL() === 'file://' + path.resolve(__dirname, '../app.html')
-        ? curr
-        : window
-    );
+  const content = webContents.getAllWebContents().reduce((window, curr) => {
+    const appWindow = `file:\/\/${path.resolve(__dirname, '../app')}`;
+    const reg = new RegExp(appWindow, 'g');
+    return curr.getURL().match(reg) ? curr : window;
+  });
 
   const containers = await docker.listContainers({ all: true });
   containers.forEach(async (container) => {
@@ -81,9 +79,14 @@ async function collectLiveLogs() {
               { upsert: true, new: true }
             );
           }
-          content.send('newLog', {...newLogToSend,
-            _id: newLogToSend._id.toString(), 
-            _doc: {...newLogToSend._doc, _id: newLogToSend._doc._id.toString()}});
+          content.send('newLog', {
+            ...newLogToSend,
+            _id: newLogToSend._id.toString(),
+            _doc: {
+              ...newLogToSend._doc,
+              _id: newLogToSend._doc._id.toString(),
+            },
+          });
         });
 
         stderr.on('data', async (chunk) => {
@@ -113,10 +116,15 @@ async function collectLiveLogs() {
               { upsert: true, new: true }
             );
           }
-          
-          content.send('newLog', {...newLogToSend,
-            _id: newLogToSend._id.toString(), 
-            _doc: {...newLogToSend._doc, _id: newLogToSend._doc._id.toString()}});
+
+          content.send('newLog', {
+            ...newLogToSend,
+            _id: newLogToSend._id.toString(),
+            _doc: {
+              ...newLogToSend._doc,
+              _id: newLogToSend._doc._id.toString(),
+            },
+          });
         });
       }
     } catch (err) {
