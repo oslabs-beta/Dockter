@@ -15,7 +15,10 @@ const Utilities = ({
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
-      <SearchBar />
+      <SearchBar
+        filterOptions={filterOptions}
+        setFilterOptions={setFilterOptions}
+      />
       <LiveLogController
         listeningForNewLogs={listeningForNewLogs}
         setListeningForNewLogs={setListeningForNewLogs}

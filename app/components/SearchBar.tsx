@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
 import React, { useState } from 'react';
 
-const SearchBar = () => {
+const SearchBar = ({ filterOptions, setFilterOptions }) => {
   const [search, setSearch] = useState('');
   // const [searchAllowed, setCanSearch] = useState('');
 
@@ -29,11 +29,15 @@ const SearchBar = () => {
             if (search === '') return;
 
             if (search) {
-              ipcRenderer.send('search', search);
-            }
+              // ipcRenderer.send('search', search);
+              setFilterOptions({
+                ...filterOptions,
+                search,
+              });
 
-            // Clear input field
-            setSearch('');
+              // Clear input field
+              setSearch('');
+            }
           }}
         >
           Submit

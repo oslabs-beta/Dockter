@@ -16,7 +16,7 @@ const LogsContainer = () => {
     },
     host_ip: [],
     host_port: [],
-    log_level: [],
+    search: '',
   });
 
   return (

@@ -36,10 +36,12 @@ ipcMain.on('filter', (event, arg) => {
         }
       });
   } else {
-    const query = [];
+    const query = {};
+    const filterQuery = [];
+    let searchFlag = false;
     for (let i = 0; i < filterProps.length; i++) {
       if (filterProps[i] === 'timestamp') {
-        query.push({
+        filterQuery.push({
           timestamp: {
             $gte: new Date(filterOptions.timestamp.from),
             $lte: new Date(filterOptions.timestamp.to),
@@ -49,7 +51,7 @@ ipcMain.on('filter', (event, arg) => {
       }
       if (filterProps[i] === 'private_port') {
         for (let j = 0; j < filterOptions.private_port.length; j++) {
-          query.push({
+          filterQuery.push({
             'ports.PrivatePort': parseInt(filterOptions.private_port[j]),
           });
         }
@@ -58,7 +60,7 @@ ipcMain.on('filter', (event, arg) => {
 
       if (filterProps[i] === 'public_port') {
         for (let j = 0; j < filterOptions.public_port.length; j++) {
-          query.push({
+          filterQuery.push({
             'ports.PublicPort': parseInt(filterOptions.public_port[j]),
           });
         }
@@ -66,24 +68,31 @@ ipcMain.on('filter', (event, arg) => {
       }
       if (filterProps[i] === 'host_ip') {
         for (let j = 0; j < filterOptions.host_ip.length; j++) {
-          query.push({ 'ports.IP': filterOptions.host_ip[j] });
+          filterQuery.push({ 'ports.IP': filterOptions.host_ip[j] });
         }
         break;
       }
+      if (filterProps[i] === 'search') {
+        searchFlag = true;
+        break;
+      }
       for (let j = 0; j < filterOptions[filterProps[i]].length; j++) {
-        query.push({ [filterProps[i]]: filterOptions[filterProps[i]][j] });
+        filterQuery.push({
+          [filterProps[i]]: filterOptions[filterProps[i]][j],
+        });
       }
     }
 
-    Log.find({ $or: query })
+    if (filterQuery.length) query.$or = filterQuery;
+    if (searchFlag) query.$text = { $search: filterOptions.search };
+
+    Log.find(query)
       .sort({ timestamp: -1 })
       .limit(100)
       .exec((err, logs) => {
         if (err) {
           console.log('ERROR HYD', err);
         } else {
-          //TODO: delete out console.log
-          console.log('LOGGYGUY', logs);
           event.reply(
             'reply-filter',
             logs.map((log) => {
