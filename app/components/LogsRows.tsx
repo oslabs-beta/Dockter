@@ -8,15 +8,6 @@ const convert = new Convert();
 const LogsRows = ({ logs, filterOptions }) => {
   return logs.map((log, i) => {
     const {
-      // container_id,
-      // container_name,
-      // container_image,
-      // host_port,
-      // stream,
-      // time,
-      // timestamp,
-      // message,
-      // ports,
       message,
       container_id,
       container_name,
@@ -76,32 +67,30 @@ const LogsRows = ({ logs, filterOptions }) => {
     // TODO: Handle .slice error message
     // TODO: Decide if containerId slice should happen server-side
     return (
-      <tr key={`log-row-${i}`} className="flex w-full mb-4">
-        <td className="px-6 py-4 w-56">
-          <div className="text-xs leading-5 text-gray-500">
+      <div key={`log-row-${i}`} className="flex w-full my-px bg-gray-100">
+        <div className="px-6 py-4 w-56">
+          <div className="text-xs leading-5 text-gray-600">
             {timestamp ? new Date(timestamp).toUTCString() : ''}
           </div>
-        </td>
-        <td className="px-6 py-4 flex-grow">
+        </div>
+        <div className="px-6 py-4 flex-grow">
           <div className="text-sm leading-5 whitespace-normal text-gray-800">
             {messageWithANSI}
           </div>
-        </td>
-        <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
+        </div>
+        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
           {container_id ? container_id.slice(0, 14) : ''}
-        </td>
-        <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
+        </div>
+        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
           {container_name ? container_name : ''}
-        </td>
-        <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
+        </div>
+        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
           {container_image ? container_image : ''}
-        </td>
-        <td className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-500">
-          {/* TODO: Test portsStr string template literal with new schema */}
-          {/* {host_port ? host_port : ''} */}
+        </div>
+        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
           {portsStr}
-        </td>
-        <td className="px-6 py-4 w-1/12">
+        </div>
+        <div className="px-6 py-4 w-1/12">
           <span
             className={
               stream === 'stderr'
@@ -111,8 +100,8 @@ const LogsRows = ({ logs, filterOptions }) => {
           >
             {stream ? stream : ''}
           </span>
-        </td>
-      </tr>
+        </div>
+      </div>
     );
   });
 };
