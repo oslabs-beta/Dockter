@@ -29,7 +29,6 @@ const LogsTable = ({
 
   useEffect(() => {
     ipcRenderer.on('newLog', (event, newLog) => {
-      console.log('this is newLog', newLog);
       setNewLog(newLog);
     });
 
@@ -88,15 +87,7 @@ const LogsTable = ({
             next={() => {
               console.log('Infinite scroll requests new logs');
               if (listeningForNewLogs) {
-                console.log(
-                  'before toggling setListeningForNewLogs',
-                  logs.length
-                );
                 setListeningForNewLogs(false);
-                console.log(
-                  'after toggling setListeningForNewLogs',
-                  logs.length
-                );
               }
 
               ipcRenderer.send('scroll', {
