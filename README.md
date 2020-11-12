@@ -8,6 +8,7 @@
 </p>
 
 # Appendix
+
 [_What is Dockter_](#overview)  
 [_Companion Website_](#companion-website)  
 [_Prerequisites_](#prerequisites)  
@@ -26,11 +27,14 @@
 > - **Efficient Storage** - with the power of Electron, Dockter provides users with the flexibility to store container logs on their computer's local memory or local disk storage
 > - **Search Capability** - container debugging has never been easier thanks to Dockter's snappy filter, sort, and search features
 
+![Dockter Screenshot](app/assets/DockterScreenshot.png)
+
 # Companion Website
 
 # Prerequisites
 
 > Ensure that you have the following installed and running on your machine:
+>
 > - [Docker Client](https://www.docker.com/get-started)
 > - [Running Docker Container(s)](https://docs.docker.com/get-started/)
 > - [Yarn Package Manager](https://classic.yarnpkg.com/en/docs/getting-started)
