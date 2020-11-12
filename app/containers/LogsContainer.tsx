@@ -15,7 +15,7 @@ const LogsContainer = ({ listeningForNewLogs, setListeningForNewLogs }) => {
     },
     host_ip: [],
     host_port: [],
-    log_level: [],
+    search: '',
   });
 
   return (

@@ -28,10 +28,12 @@ ipcMain.on('scroll', (event, arg) => {
         }
       });
   } else {
-    const query = [];
+    const query = {};
+    const filterQuery = [];
+    let searchFlag = false;
     for (let i = 0; i < filterProps.length; i++) {
       if (filterProps[i] === 'timestamp') {
-        query.push({
+        filterQuery.push({
           timestamp: {
             $gte: new Date(filterOptions.timestamp.from),
             $lte: new Date(filterOptions.timestamp.to),
@@ -41,7 +43,7 @@ ipcMain.on('scroll', (event, arg) => {
       }
       if (filterProps[i] === 'private_port') {
         for (let j = 0; j < filterOptions.private_port.length; j++) {
-          query.push({
+          filterQuery.push({
             'ports.PrivatePort': parseInt(filterOptions.private_port[j]),
           });
         }
@@ -50,7 +52,7 @@ ipcMain.on('scroll', (event, arg) => {
 
       if (filterProps[i] === 'public_port') {
         for (let j = 0; j < filterOptions.public_port.length; j++) {
-          query.push({
+          filterQuery.push({
             'ports.PublicPort': parseInt(filterOptions.public_port[j]),
           });
         }
@@ -58,16 +60,25 @@ ipcMain.on('scroll', (event, arg) => {
       }
       if (filterProps[i] === 'host_ip') {
         for (let j = 0; j < filterOptions.host_ip.length; j++) {
-          query.push({ 'ports.IP': filterOptions.host_ip[j] });
+          filterQuery.push({ 'ports.IP': filterOptions.host_ip[j] });
         }
         break;
       }
+      if (filterProps[i] === 'search') {
+        searchFlag = true;
+        break;
+      }
       for (let j = 0; j < filterOptions[filterProps[i]].length; j++) {
-        query.push({ [filterProps[i]]: filterOptions[filterProps[i]][j] });
+        filterQuery.push({
+          [filterProps[i]]: filterOptions[filterProps[i]][j],
+        });
       }
     }
-    console.log('NOT IN', nin);
-    Log.find({ $or: query, _id: { $nin: nin } })
+
+    if (filterQuery.length) query.$or = filterQuery;
+    if (searchFlag) query.$text = { $search: filterOptions.search };
+
+    Log.find({ ...query, _id: { $nin: nin } })
       .sort({ timestamp: -1 })
       .limit(10)
       .exec((err, logs) => {
