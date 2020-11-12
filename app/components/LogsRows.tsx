@@ -87,7 +87,7 @@ const LogsRows = ({ logs, filterOptions }) => {
     // TODO: Decide if containerId slice should happen server-side
     return (
       <div key={`log-row-${i}`} className="flex w-full my-px bg-gray-100">
-        <div className="px-6 py-4 w-56">
+        <div className="px-6 py-4 min-w-56">
           <div className="text-xs leading-5 text-gray-600">
             {timestamp ? new Date(timestamp).toUTCString() : ''}
           </div>
