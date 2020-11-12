@@ -21,7 +21,10 @@ export default merge(baseConfig, {
 
   mode: 'production',
 
-  target: process.env.E2E_BUILD || process.env.ERB_SECURE !== 'true' ? 'electron-renderer' : 'electron-preload',
+  target:
+    process.env.E2E_BUILD || process.env.ERB_SECURE !== 'true'
+      ? 'electron-renderer'
+      : 'electron-preload',
 
   entry: [
     'core-js',
@@ -51,6 +54,15 @@ export default merge(baseConfig, {
             loader: 'css-loader',
             options: {
               sourceMap: true,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                ident: 'postcss',
+                plugins: [require('tailwindcss'), require('autoprefixer')],
+              },
             },
           },
         ],
