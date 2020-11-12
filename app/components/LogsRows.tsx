@@ -86,30 +86,45 @@ const LogsRows = ({ logs, filterOptions }) => {
     // TODO: Handle .slice error message
     // TODO: Decide if containerId slice should happen server-side
     return (
-      <div key={`log-row-${i}`} className="flex w-full my-px bg-gray-100">
-        <div className="px-6 py-4 w-56">
+      <div key={`log-row-${i}`} className="flex my-px pb-32 h-24 bg-gray-100">
+        <div className="px-6 py-4 w-1/10">
           <div className="text-xs leading-5 text-gray-600">
             {timestamp ? new Date(timestamp).toUTCString() : ''}
           </div>
         </div>
-        <div className="px-6 py-4 flex-grow">
-          <div className="text-sm leading-5 whitespace-normal text-gray-800">
+        <div className="px-6 py-4 w-2/5">
+          <div className="text-sm leading-5 h-24 overflow-auto whitespace-normal text-gray-800">
             {messageWithANSI}
           </div>
         </div>
-        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
-          {container_id ? container_id.slice(0, 14) : ''}
+        <div
+          className="px-6 py-4 w-1/10 select-all truncate whitespace-normal text-sm leading-5 text-gray-600"
+          onClick={() => {
+            document.execCommand('copy');
+          }}
+        >
+          {container_id ? container_id : ''}
         </div>
-        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
+        <div
+          className="px-6 py-4 w-1/10 select-all break-words whitespace-normal text-sm leading-5 text-gray-600"
+          onClick={() => {
+            document.execCommand('copy');
+          }}
+        >
           {container_name ? container_name : ''}
         </div>
-        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
+        <div
+          className="px-6 py-4 w-1/10 select-all break-words whitespace-normal text-sm leading-5 text-gray-600"
+          onClick={() => {
+            document.execCommand('copy');
+          }}
+        >
           {container_image ? container_image : ''}
         </div>
-        <div className="px-6 py-4 w-1/12 whitespace-normal text-sm leading-5 text-gray-600">
+        <div className="px-6 py-4 w-1/10 whitespace-normal text-sm leading-5 text-gray-600">
           {portsStr}
         </div>
-        <div className="px-6 py-4 w-1/12">
+        <div className="px-6 py-4 w-1/10">
           <span
             className={
               stream === 'stderr'

@@ -3,7 +3,11 @@ import { ipcRenderer } from 'electron';
 import LogsRows from '../components/LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs }) => {
+const LogsTable = ({
+  filterOptions,
+  listeningForNewLogs,
+  setListeningForNewLogs,
+}) => {
   const [showScrollToTopBtn, setShowScrollToTopBtn] = useState(false);
   const [scrollForMoreLogs, setScrollForMoreLogs] = useState(true);
   const [newLog, setNewLog] = useState({
@@ -25,7 +29,7 @@ const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs 
 
   useEffect(() => {
     ipcRenderer.on('newLog', (event, newLog) => {
-      console.log('this is newLog', newLog)
+      console.log('this is newLog', newLog);
       setNewLog(newLog);
     });
 
@@ -48,28 +52,28 @@ const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs 
   }, [filterOptions]);
 
   return (
-    <div className="h-screen75">
-      <div className="h-full flex flex-col">
+    <div className="h-screen75 w-screens">
+      <div className="h-full w-full flex flex-col">
         <div className="flex w-full">
-          <div className="rounded-tl-lg bg-gray-200 px-6 py-3 w-56 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="rounded-tl-lg bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Timestamp
           </div>
-          <div className="bg-gray-200 px-6 py-3 flex-grow bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-2/5 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Log
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Container ID
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Name
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Image
           </div>
-          <div className="bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Host Port
           </div>
-          <div className="rounded-tr-lg bg-gray-200 px-6 py-3 w-1/12 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
+          <div className="rounded-tr-lg bg-gray-200 px-6 py-3 w-1/10 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider">
             Stream
           </div>
         </div>
@@ -83,10 +87,16 @@ const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs 
             dataLength={logs.length}
             next={() => {
               console.log('Infinite scroll requests new logs');
-              if(listeningForNewLogs) {
-                console.log('before toggling setListeningForNewLogs', logs.length);
-                setListeningForNewLogs(false)
-                console.log('after toggling setListeningForNewLogs', logs.length);
+              if (listeningForNewLogs) {
+                console.log(
+                  'before toggling setListeningForNewLogs',
+                  logs.length
+                );
+                setListeningForNewLogs(false);
+                console.log(
+                  'after toggling setListeningForNewLogs',
+                  logs.length
+                );
               }
 
               ipcRenderer.send('scroll', {
@@ -113,7 +123,12 @@ const LogsTable = ({ filterOptions, listeningForNewLogs, setListeningForNewLogs 
               else setShowScrollToTopBtn(false);
             }}
           >
-            {useMemo(()=><LogsRows logs={logs} filterOptions={filterOptions} />, [logs])}
+            {useMemo(
+              () => (
+                <LogsRows logs={logs} filterOptions={filterOptions} />
+              ),
+              [logs]
+            )}
           </InfiniteScroll>
         </div>
         {showScrollToTopBtn && (
