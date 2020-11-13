@@ -119,10 +119,10 @@ _To perform tests on the Dockter codebase, please clone the repository to your l
 # Authors
 
 Benjamin Brower [@github](https://github.com/bbrower21) [@linkedIn](https://www.linkedin.com/in/ben-brower-80660073/)  
-Anup Ramdass [@github](https://github.com/anrax) [@linkedIn]()  
+Anup Ramdass [@github](https://github.com/anrax) [@linkedIn](https://www.linkedin.com/in/anupramdass/)  
 Nancy Koushoult [@github](https://github.com/noodlemonkey) [@linkedIn](https://www.linkedin.com/in/nancy-kousholt-a6a2071b9/)  
 Kyle Whang [@github](https://github.com/shaisle) [@linkedIn](https://www.linkedin.com/in/kylewhang/)  
-Samuel Kim [@github](https://github.com/samuy) [@linkedIn]()
+Samuel Kim [@github](https://github.com/samuy) [@linkedIn](https://www.linkedin.com/in/whalewhalewhale/)
 
 # Features In Beta
 
