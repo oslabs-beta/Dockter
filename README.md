@@ -10,7 +10,7 @@
 </p>
 <br/>
 <p align="center">
-  <a href="https://www.producthunt.com/posts/dockter?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dockter" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=274669&theme=light" alt="Dockter - A low-overhead, open-source Docker log management tool | Product Hunt" style="width: 200px; height: 54px;" width="200" height="54" /></a>
+  <a href="https://www.producthunt.com/posts/dockter?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dockter" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=274669&theme=dark" alt="Dockter - A low-overhead, open-source Docker log management tool | Product Hunt" style="width: 250px; height: 54px;" width="200" height="54" /></a>
 </p>
 
 # Appendix
