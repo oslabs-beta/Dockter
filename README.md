@@ -1,4 +1,6 @@
-![Dockter Logo](app/assets/DockterLogo.png)
+<p align="center">
+  <img width="256" height="256" src="resources/icons/256x256.png">
+</p>
 
 <p align="center">
   <img alt="GitHub" src="https://img.shields.io/github/license/oslabs-beta/Dockter?color=blue">
@@ -24,10 +26,10 @@
 > Dockter v1.0 is a low-overhead , open source Docker log management tool built around:
 >
 > - **Real-time Log Aggregation** - communications with the Docker Engine API allows us the ability to wrangle container streams and translate those chunks into readable data that can be viewed on an intuitve dashboard
-> - **Efficient Storage** - with the power of Electron, Dockter provides users with the flexibility to store container logs on their computer's local memory or local disk storage
+> - **Efficient Storage** - with the power of Electron, Dockter provides users with the ability to store container logs on their local disk storage (shared database storage is in the works!)
 > - **Search Capability** - container debugging has never been easier thanks to Dockter's snappy filter, sort, and search features
-
-![Dockter Screenshot](app/assets/DockterScreenshot.png)
+> 
+> ![Dockter Screenshot](app/assets/DockterScreenshot.png)
 
 # Companion Website
 
