@@ -27,15 +27,15 @@
 >
 > - **Real-time Log Aggregation** - communications with the Docker Engine API allows us the ability to wrangle container streams and translate those chunks into readable data that can be viewed on an intuitve dashboard
 >
-> ![Play Button](app/assets/Playbutton.gif)
+> ![Play Button](https://media.giphy.com/media/tCRgZysaNlDViounfv/giphy.gif)
 >
 > - **Efficient Storage** - with the power of Electron, Dockter provides users with the ability to store container logs on their local disk storage (shared database storage is in the works!)
 >
-> ![Storage](app/assets/scroll.gif)
+> ![Storage](https://media.giphy.com/media/BxN3pd5okEMaG6auPw/giphy.gif)
 >
 > - **Search Capability** - container debugging has never been easier thanks to Dockter's snappy filter, sort, and search features
 >
-> ![Filter](app/assets/betterfilter.gif)
+> ![Filter](https://media.giphy.com/media/ueqUbnusHfOAVJdOXu/giphy.gif)
 
 # Companion Website
 
