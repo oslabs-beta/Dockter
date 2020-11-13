@@ -8,6 +8,10 @@
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/oslabs-beta/Dockter?color=green">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/oslabs-beta/Dockter?style=social">  
 </p>
+<br/>
+<p align="center">
+  <a href="https://www.producthunt.com/posts/dockter?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dockter" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=274669&theme=light" alt="Dockter - A low-overhead, open-source Docker log management tool | Product Hunt" style="width: 200px; height: 54px;" width="200" height="54" /></a>
+</p>
 
 # Appendix
 
@@ -26,16 +30,28 @@
 > Dockter v1.0 is a low-overhead , open source Docker log management tool built around:
 >
 > - **Real-time Log Aggregation** - communications with the Docker Engine API allows us the ability to wrangle container streams and translate those chunks into readable data that can be viewed on an intuitve dashboard
->
-> ![Play Button](https://media.giphy.com/media/tCRgZysaNlDViounfv/giphy.gif)
->
+> 
+> <br/>
+> <p align="center">
+>   <img width="700" src="https://media.giphy.com/media/tCRgZysaNlDViounfv/giphy.gif">
+> </p>
+> <br/>
+> 
 > - **Efficient Storage** - with the power of Electron, Dockter provides users with the ability to store container logs on their local disk storage (shared database storage is in the works!)
 >
-> ![Storage](https://media.giphy.com/media/BxN3pd5okEMaG6auPw/giphy.gif)
->
+> <br/>
+> <p align="center">
+>   <img width="700" src="https://media.giphy.com/media/BxN3pd5okEMaG6auPw/giphy.gif">
+> </p>
+> <br />
+> 
 > - **Search Capability** - container debugging has never been easier thanks to Dockter's snappy filter, sort, and search features
 >
-> ![Filter](https://media.giphy.com/media/ueqUbnusHfOAVJdOXu/giphy.gif)
+> <br/>
+> <p align="center">
+>   <img width="700" src="https://media.giphy.com/media/ueqUbnusHfOAVJdOXu/giphy.gif">
+> </p>
+> <br />
 
 # Companion Website
 
