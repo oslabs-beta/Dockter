@@ -27,7 +27,7 @@
 
 # What is Dockter?
 
-> Dockter v1.0 is a low-overhead , open source Docker log management tool built around:
+> Dockter v0.1.0 is a low-overhead , open source Docker log management tool built around:
 >
 > - **Real-time Log Aggregation** - communications with the Docker Engine API allows us the ability to wrangle container streams and translate those chunks into readable data that can be viewed on an intuitve dashboard
 > 
