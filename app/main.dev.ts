@@ -11,12 +11,12 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, ipcRenderer } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import './main-process/dockter-log';
-import './main-process/hidden-dockter-log';
+import './main-process/liveLogs';
+import './main-process/startup';
 import './main-process/filter';
 import './main-process/scroll';
 

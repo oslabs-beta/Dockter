@@ -8,7 +8,7 @@ import {
   applicationStartTime,
   applicationStartTimeUnix,
   pastLogCollectionComplete,
-} from './hidden-dockter-log';
+} from './startup';
 
 // Connects dockerode to this path to open up communication with docker api
 const scktPath =
