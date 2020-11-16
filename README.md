@@ -26,9 +26,9 @@
 
 # What is Dockter?
 
-> Dockter v0.1.0 is a low-overhead , open source Docker log management tool built around:
+> Dockter v0.1.0 is a low-overhead , open source Docker log management tool built for:
 >
-> - **Real-time Log Aggregation** - communications with the Docker Engine API allows us the ability to wrangle container streams and translate those chunks into readable data that can be viewed on an intuitve dashboard
+> - **Real-time Log Collection** - communicating with the Docker Engine API to access container streams and collect live logs
 > 
 > <br/>
 > <p align="center">
@@ -36,7 +36,7 @@
 > </p>
 > <br/>
 > 
-> - **Efficient Storage** - with the power of Electron, Dockter provides users with the ability to store container logs on their local disk storage (shared database storage is in the works!)
+> - **Log Aggregation** - Storing container logs into a centralized database
 >
 > <br/>
 > <p align="center">
@@ -44,7 +44,7 @@
 > </p>
 > <br />
 > 
-> - **Search Capability** - container debugging has never been easier thanks to Dockter's snappy filter, sort, and search features
+> - **Filter & Search Capability** - Analyze and extract meaningful data through filter and search 
 >
 > <br/>
 > <p align="center">
@@ -63,6 +63,7 @@
 >
 > - [Docker Client](https://www.docker.com/get-started)
 > - [Running Docker Container(s)](https://docs.docker.com/get-started/)
+> - [MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
 > - [Yarn Package Manager](https://classic.yarnpkg.com/en/docs/getting-started)
 
 # Quick Start
@@ -152,5 +153,5 @@ Samuel Kim [@github](https://github.com/samuy) [@linkedIn](https://www.linkedin.
 
 _The Dockter team is dedicated to working around the clock to ensure proper maintainence and the addition of even more robust features. The following are coming soon:_
 
-> - Analysis and Container Metrics - real-time containers statistics will be available to the user on the Dockter dashboard in a visualized format with the capability to dynamically focus on logs that may require higher levels of oversight
+> - Analysis of Log Metrics - real-time log statistics will be available to the user on the Dockter dashboard in a visualized format with the capability to dynamically focus on logs that may require higher levels of oversight
 > - Container management - users will be able to remove, stop, and start containers from within the Dockter dashboard
