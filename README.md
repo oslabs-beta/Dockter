@@ -14,9 +14,8 @@
 </p>
 
 # Appendix
-
+<!-- [_Companion Website_](#companion-website)   -->
 [_What is Dockter_](#overview)  
-[_Companion Website_](#companion-website)  
 [_Prerequisites_](#prerequisites)  
 [_Quick Start_](#quick-start)  
 [_Built With_](#built-with)  
@@ -53,10 +52,10 @@
 > </p>
 > <br />
 
-# Companion Website
+<!-- # Companion Website
 
 > - [Dockter.io](https://www.dockter.io/)
-> - [Give us some claps on medium!](https://kylewhang.medium.com/a-remedy-for-containerized-illness-f9d0c5e49f6)
+> - [Give us some claps on medium!](https://kylewhang.medium.com/a-remedy-for-containerized-illness-f9d0c5e49f6) -->
 
 # Prerequisites
 
