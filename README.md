@@ -8,11 +8,14 @@
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/oslabs-beta/Dockter?color=green">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/oslabs-beta/Dockter?style=social">  
 </p>
+<br/>
+<p align="center">
+  <a href="https://www.producthunt.com/posts/dockter?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dockter" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=274669&theme=dark" alt="Dockter - A low-overhead, open-source Docker log management tool | Product Hunt" style="width: 250px; height: 54px;" width="200" height="54" /></a>
+</p>
 
 # Appendix
-
+<!-- [_Companion Website_](#companion-website)   -->
 [_What is Dockter_](#overview)  
-[_Companion Website_](#companion-website)  
 [_Prerequisites_](#prerequisites)  
 [_Quick Start_](#quick-start)  
 [_Built With_](#built-with)  
@@ -23,24 +26,36 @@
 
 # What is Dockter?
 
-> Dockter v1.0 is a low-overhead , open source Docker log management tool built around:
+> Dockter v0.1.0 is a low-overhead , open source Docker log management tool built for:
 >
-> - **Real-time Log Aggregation** - communications with the Docker Engine API allows us the ability to wrangle container streams and translate those chunks into readable data that can be viewed on an intuitve dashboard
+> - **Real-time Log Collection** - communicating with the Docker Engine API to access container streams and collect live logs
+> 
+> <br/>
+> <p align="center">
+>   <img width="700" src="https://media.giphy.com/media/tCRgZysaNlDViounfv/giphy.gif">
+> </p>
+> <br/>
+> 
+> - **Log Aggregation** - Storing container logs into a centralized database
 >
-> ![Play Button](https://media.giphy.com/media/tCRgZysaNlDViounfv/giphy.gif)
+> <br/>
+> <p align="center">
+>   <img width="700" src="https://media.giphy.com/media/BxN3pd5okEMaG6auPw/giphy.gif">
+> </p>
+> <br />
+> 
+> - **Filter & Search Capability** - Analyze and extract meaningful data through filter and search 
 >
-> - **Efficient Storage** - with the power of Electron, Dockter provides users with the ability to store container logs on their local disk storage (shared database storage is in the works!)
->
-> ![Storage](https://media.giphy.com/media/BxN3pd5okEMaG6auPw/giphy.gif)
->
-> - **Search Capability** - container debugging has never been easier thanks to Dockter's snappy filter, sort, and search features
->
-> ![Filter](https://media.giphy.com/media/ueqUbnusHfOAVJdOXu/giphy.gif)
+> <br/>
+> <p align="center">
+>   <img width="700" src="https://media.giphy.com/media/ueqUbnusHfOAVJdOXu/giphy.gif">
+> </p>
+> <br />
 
-# Companion Website
+<!-- # Companion Website
 
 > - [Dockter.io](https://www.dockter.io/)
-> - [Give us some claps on medium!](https://kylewhang.medium.com/a-remedy-for-containerized-illness-f9d0c5e49f6)
+> - [Give us some claps on medium!](https://kylewhang.medium.com/a-remedy-for-containerized-illness-f9d0c5e49f6) -->
 
 # Prerequisites
 
@@ -48,6 +63,7 @@
 >
 > - [Docker Client](https://www.docker.com/get-started)
 > - [Running Docker Container(s)](https://docs.docker.com/get-started/)
+> - [MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
 > - [Yarn Package Manager](https://classic.yarnpkg.com/en/docs/getting-started)
 
 # Quick Start
@@ -137,5 +153,5 @@ Samuel Kim [@github](https://github.com/samuy) [@linkedIn](https://www.linkedin.
 
 _The Dockter team is dedicated to working around the clock to ensure proper maintainence and the addition of even more robust features. The following are coming soon:_
 
-> - Analysis and Container Metrics - real-time containers statistics will be available to the user on the Dockter dashboard in a visualized format with the capability to dynamically focus on logs that may require higher levels of oversight
+> - Analysis of Log Metrics - real-time log statistics will be available to the user on the Dockter dashboard in a visualized format with the capability to dynamically focus on logs that may require higher levels of oversight
 > - Container management - users will be able to remove, stop, and start containers from within the Dockter dashboard

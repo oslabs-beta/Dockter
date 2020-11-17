@@ -1,11 +1,11 @@
-import { ipcMain, webContents } from 'electron';
+import { ipcMain } from 'electron';
 import stream from 'stream';
 import Docker from 'dockerode';
 import Log from '../models/logModel';
 import Container from '../models/containerModel';
-import collectLiveLogs from './dockter-log';
+import collectLiveLogs from './liveLogs';
 
-// Purpose: Interaction with Hidden WIndow is to manage load of persistent log storage to app
+// Purpose: Before application begins, this process collects logs that have been generated while the application was closed
 
 // Connects dockerode to this path to open up communication with docker api
 const scktPath =
