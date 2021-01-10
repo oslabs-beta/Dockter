@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';
 import React, { useState } from 'react';
 
 const SearchBar = ({ filterOptions, setFilterOptions }) => {

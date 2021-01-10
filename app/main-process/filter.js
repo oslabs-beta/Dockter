@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { ipcMain } from 'electron';
-import { db } from './db.ts';
+import { db } from './db.js';
 import Log from '../models/logModel';
 
 //TODO: Figure out better way to instantiate database

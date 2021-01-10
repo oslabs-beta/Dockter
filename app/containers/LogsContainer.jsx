@@ -1,6 +1,6 @@
 import React from 'react';
 import Utilities from '../components/Utilities';
-import LogsTable from '../components/LogsTable.tsx';
+import LogsTable from '../components/LogsTable';
 
 const LogsContainer = ({ filterOptions, setFilterOptions }) => {
   return (

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import LogsContainer from './LogsContainer';
 import Navbar from '../components/Navbar';
 // TODO: Investigate where to put IPC Event Emitter for channel ready
-import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';
 
 export default function LandingPage() {
-  ipcRenderer.send('ready');
+  // ipcRenderer.send('ready');
   const [filterOptions, setFilterOptions] = useState({
     container_id: [],
     container_name: [],

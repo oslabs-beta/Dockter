@@ -2,9 +2,9 @@ const path = require('path');
 
 module.exports = {
   mode: process.env.NODE_ENV,
-  entry: './app/index.tsx',
+  entry: './app/index.jsx',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, './dist'),
     filename: '[name].bundle.js',
     publicPath: '/dist/',
   },
@@ -12,7 +12,9 @@ module.exports = {
     publicPath: '/dist/',
     hot: true,
     open: true,
-    proxy: {},
+    proxy: {
+      '/': 'http://localhost:3000',
+    },
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -21,7 +23,7 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|tsx)$/,
-        loader: 'awesome-typescript-loader',
+        loader: 'ts-loader',
         exclude: /node_modules/,
       },
       {

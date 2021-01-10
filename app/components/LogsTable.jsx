@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ipcRenderer } from 'electron';
-import LogsRows from '../components/LogsRows';
+// import { ipcRenderer } from 'electron';
+import LogsRows from './LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const LogsTable = ({ filterOptions }) => {
@@ -23,28 +23,28 @@ const LogsTable = ({ filterOptions }) => {
   const [logs, setLogs] = useState([]);
   const tableBody = useRef(null);
 
-  useEffect(() => {
-    ipcRenderer.on('newLog', (event, newLog) => {
-      setNewLog(newLog);
-    });
+  // useEffect(() => {
+  //   ipcRenderer.on('newLog', (event, newLog) => {
+  //     setNewLog(newLog);
+  //   });
 
-    ipcRenderer.on('reply-filter', (event, newLogs) => {
-      setLogs(newLogs);
-    });
+  //   ipcRenderer.on('reply-filter', (event, newLogs) => {
+  //     setLogs(newLogs);
+  //   });
 
-    ipcRenderer.on('search-reply', (event, newLogs) => {
-      setLogs(newLogs);
-    });
-  }, []);
+  //   ipcRenderer.on('search-reply', (event, newLogs) => {
+  //     setLogs(newLogs);
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    setLogs([newLog, ...logs]);
-  }, [newLog]);
+  // useEffect(() => {
+  //   setLogs([newLog, ...logs]);
+  // }, [newLog]);
 
-  // Filter logic
-  useEffect(() => {
-    ipcRenderer.send('filter', filterOptions);
-  }, [filterOptions]);
+  // // Filter logic
+  // useEffect(() => {
+  //   ipcRenderer.send('filter', filterOptions);
+  // }, [filterOptions]);
 
   return (
     <div className="h-screen75 w-screens">
@@ -81,19 +81,19 @@ const LogsTable = ({ filterOptions }) => {
             className="w-full"
             dataLength={logs.length}
             next={() => {
-              ipcRenderer.send('scroll', {
-                filterOptions,
-                nin: logs.map((log) => {
-                  return log._doc._id;
-                }),
-              });
-              ipcRenderer.on('scroll-reply', (event, arg) => {
-                // Args is either going to be a boolean or a more logs
-                // If typeof arg is bool, then we setScrollForMoreLogs(false);
-                if (typeof arg === 'boolean') setScrollForMoreLogs(false);
-                // Else, we update logs with setLogs
-                else setLogs([...logs, ...arg]);
-              });
+              // ipcRenderer.send('scroll', {
+              //   filterOptions,
+              //   nin: logs.map((log) => {
+              //     return log._doc._id;
+              //   }),
+              // });
+              // ipcRenderer.on('scroll-reply', (event, arg) => {
+              //   // Args is either going to be a boolean or a more logs
+              //   // If typeof arg is bool, then we setScrollForMoreLogs(false);
+              //   if (typeof arg === 'boolean') setScrollForMoreLogs(false);
+              //   // Else, we update logs with setLogs
+              //   else setLogs([...logs, ...arg]);
+              // });
             }}
             scrollThreshold={1}
             scrollableTarget="logs-container"

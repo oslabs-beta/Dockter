@@ -147,6 +147,10 @@ const startup = async () => {
 
 app.use(express.static('public'));
 
+if (process.env.NODE_ENV === 'production') {
+  app.use('/dist', express.static(path.resolve(__dirname, '../dist')));
+}
+
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });

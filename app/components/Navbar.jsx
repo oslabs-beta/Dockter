@@ -1,5 +1,5 @@
 import React from 'react';
-import LiveLogController from './LiveLogController';
+// import LiveLogController from './LiveLogController';
 
 const Navbar = ({ filterOptions }) => {
   return (
@@ -25,7 +25,7 @@ const Navbar = ({ filterOptions }) => {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <LiveLogController filterOptions={filterOptions} />
+            {/* <LiveLogController filterOptions={filterOptions} /> */}
           </div>
         </div>
       </div>
