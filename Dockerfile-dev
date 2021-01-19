@@ -1,0 +1,8 @@
+FROM node:current-slim
+
+RUN npm install -g webpack
+WORKDIR /usr/src/app
+COPY package*.json .
+RUN npm install
+COPY . ./
+EXPOSE 3000

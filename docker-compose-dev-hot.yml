@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  dev:
+    image: dockter
+    container_name: dockter-dev-hot
+    ports:
+      - '8080:3000'
+    volumes:
+      - node_modules:/usr/src/app/node_modules
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: npm run dev:hot
+    depends_on:
+      - db
+
+  db:
+    image: influxdb
+    container_name: dockter-db
+    ports:
+      - '8086:8086'
+
+volumes:
+  node_modules:
