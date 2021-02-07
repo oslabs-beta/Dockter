@@ -3,9 +3,11 @@ const path = require('path');
 const stream = require('stream');
 const Docker = require('dockerode');
 
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 const influx = require('./db');
 
-const app = express();
 const PORT = 3000;
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
@@ -96,10 +98,10 @@ const initalizeDB = async () => {
                     );
 
                     queryResult.forEach((row) => {
-                      console.log(
-                        'query result should go here >>>>>>>>>>',
-                        row
-                      );
+                      // console.log(
+                      //   'query result should go here >>>>>>>>>>',
+                      //   row
+                      // );
                     });
                   } catch (e) {
                     console.log(e);
@@ -123,6 +125,7 @@ const initalizeDB = async () => {
 };
 
 initalizeDB();
+
 // const startup = async () => {
 //   try {
 //     const containers = await docker.listContainers({ all: true });
@@ -265,6 +268,51 @@ if (process.env.NODE_ENV === 'production') {
   app.use('/dist', express.static(path.resolve(__dirname, '../dist')));
 }
 
-app.listen(PORT, () => {
+io.on('connection', (socket) => {
+  socket.on('filter', async (activeFilters) => {
+    // TODO: Remove
+    console.log('active filters updated:', activeFilters);
+
+    const {
+      container_id,
+      container_name,
+      container_image,
+      status,
+      stream,
+      timestamp,
+      host_ip,
+      host_port,
+      search,
+    } = activeFilters;
+
+    const regex = {};
+
+    regex.container_name = container_name.length
+      ? new RegExp(container_name.map((criteria) => `^${criteria}$`).join('|'))
+      : new RegExp('.');
+
+    // Object.values(activeFilters).forEach(([criteria, filter]) => {
+    //   // Generate a regex for each filter
+    //   // If a filter criteria is empty, assume user wants all
+    //   // TODO: make all filters an array
+    //   regex[criteria] = filter.length
+    //     ? new RegExp(filter.join('|'))
+    //     : new RegExp('.');
+    // });
+
+    const queryResult = await influx.query(
+      `
+      select * from logs
+      where container_name =~ ${regex.container_name}
+      `
+    );
+
+    queryResult.forEach((row) => {
+      console.log('query result ----------->', row);
+    });
+  });
+});
+
+http.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });

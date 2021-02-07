@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 // import { ipcRenderer } from 'electron';
 import LogsRows from './LogsRows';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import socket from '../socket';
 
 const LogsTable = ({ filterOptions }) => {
   const [showScrollToTopBtn, setShowScrollToTopBtn] = useState(false);
@@ -41,10 +42,10 @@ const LogsTable = ({ filterOptions }) => {
   //   setLogs([newLog, ...logs]);
   // }, [newLog]);
 
-  // // Filter logic
-  // useEffect(() => {
-  //   ipcRenderer.send('filter', filterOptions);
-  // }, [filterOptions]);
+  // Filter logic
+  useEffect(() => {
+    socket.emit('filter', filterOptions);
+  }, [filterOptions]);
 
   return (
     <div className="h-screen75 w-screens">
